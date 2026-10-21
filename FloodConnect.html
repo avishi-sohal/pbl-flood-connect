@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>FloodConnect</title>
+    <style>
+        :root {
+            --bg: #f5f7fa;
+            --card: #fff;
+            --fg: #1b2432;
+            --mut: #6b7686;
+            --bd: #e6eaf0;
+            --acc: #0f766e;
+            --acc2: #e3f3f0;
+            --accfg: #fff;
+            --hi: #b42318;
+            --hib: #fdecea;
+            --ok: #157347;
+            --err: #b42318;
+            --sh: 0 1px 2px rgba(16, 24, 40, .05), 0 10px 28px rgba(16, 24, 40, .06);
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #0e1520;
+                --card: #151f2d;
+                --fg: #e8eef6;
+                --mut: #92a1b5;
+                --bd: #243245;
+                --acc: #2dd4bf;
+                --acc2: #12312f;
+                --accfg: #06201d;
+                --hi: #ff8a7a;
+                --hib: #3a1e1c;
+                --ok: #7fd68a;
+                --err: #ff8a7a
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0e1520;
+            --card: #151f2d;
+            --fg: #e8eef6;
+            --mut: #92a1b5;
+            --bd: #243245;
+            --acc: #2dd4bf;
+            --acc2: #12312f;
+            --accfg: #06201d;
+            --hi: #ff8a7a;
+            --hib: #3a1e1c;
+            --ok: #7fd68a;
+            --err: #ff8a7a
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font: 14.5px/1.5 Inter, "Segoe UI", system-ui, Arial, sans-serif
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh
+        }
+
+        aside {
+            width: 244px;
+            flex: none;
+            background: var(--card);
+            border-right: 1px solid var(--bd);
+            padding: 24px 14px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 28px
+        }
+
+        .brand {
+            display: flex;
+            gap: 11px;
+            align-items: center;
+            padding: 0 8px
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: var(--acc);
+            color: var(--accfg);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 19px
+        }
+
+        .brand b {
+            display: block;
+            font-size: 15px;
+            letter-spacing: .5px
+        }
+
+        .brand span {
+            font-size: 12px;
+            color: var(--mut)
+        }
+
+        aside nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px
+        }
+
+        aside nav button {
+            text-align: left;
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 14px;
+            background: transparent;
+            color: var(--mut);
+            font: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: .15s
+        }
+
+        aside nav button:hover {
+            background: var(--bg);
+            color: var(--fg)
+        }
+
+        aside nav button.on {
+            background: var(--acc2);
+            color: var(--acc);
+            font-weight: 600
+        }
+
+        .content {
+            flex: 1;
+            min-width: 0
+        }
+
+        .bar {
+            padding: 26px 32px 2px
+        }
+
+        .bar h1 {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 650;
+            letter-spacing: -.2px
+        }
+
+        .bar .mut {
+            font-size: 13.5px
+        }
+
+        main {
+            margin: 18px 32px 32px;
+            padding: 26px;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: var(--sh)
+        }
+
+        main>* {
+            animation: fade .25s ease
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(5px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        main>h2 {
+            display: none
+        }
+
+        h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 22px 0 10px
+        }
+
+        p {
+            margin: 8px 0
+        }
+
+        .mut {
+            color: var(--mut)
+        }
+
+        .w {
+            overflow-x: auto
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0
+        }
+
+        th {
+            text-align: left;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: var(--mut);
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--bd)
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--bd);
+            vertical-align: middle
+        }
+
+        tr:last-child td {
+            border-bottom: 0
+        }
+
+        tbody tr:hover td,
+        tr:hover>td {
+            background: var(--bg)
+        }
+
+        .f {
+            max-width: 560px
+        }
+
+        .f td {
+            border-bottom: 0;
+            padding: 7px 12px 7px 0
+        }
+
+        .f td:first-child {
+            width: 38%;
+            color: var(--mut)
+        }
+
+        .f input,
+        .f select {
+            width: 100%
+        }
+
+        input,
+        select,
+        textarea {
+            font: inherit;
+            color: var(--fg);
+            background: var(--bg);
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            padding: 9px 12px
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 0;
+            border-color: var(--acc);
+            box-shadow: 0 0 0 3px var(--acc2)
+        }
+
+        #q {
+            width: 250px;
+            max-width: 100%;
+            margin-left: 6px
+        }
+
+        td input[type=number] {
+            width: 80px
+        }
+
+        td select {
+            padding: 6px 10px
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            font: 12px/1.4 ui-monospace, monospace
+        }
+
+        main button {
+            font: inherit;
+            font-weight: 500;
+            background: var(--acc);
+            color: var(--accfg);
+            border: 0;
+            border-radius: 10px;
+            padding: 9px 18px;
+            cursor: pointer;
+            transition: filter .15s, transform .1s
+        }
+
+        main button:hover {
+            filter: brightness(1.08)
+        }
+
+        main button:active {
+            transform: scale(.97)
+        }
+
+        main button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        main button[data-a="del"] {
+            background: transparent;
+            color: var(--hi);
+            padding: 6px 12px
+        }
+
+        main button[data-a="del"]:hover {
+            background: var(--hib)
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 11px;
+            border-radius: 99px;
+            background: var(--bg);
+            color: var(--mut);
+            border: 1px solid var(--bd)
+        }
+
+        .tag.HIGH {
+            background: var(--hib);
+            color: var(--hi);
+            border-color: transparent
+        }
+
+        .err {
+            color: var(--err);
+            background: var(--hib);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin: 12px 0
+        }
+
+        .ok {
+            color: var(--ok);
+            margin: 10px 0
+        }
+
+        .ok:empty,
+        .err:empty {
+            display: none
+        }
+
+        .kpis {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 28px
+        }
+
+        .kpi {
+            flex: 1 1 140px;
+            padding: 4px 24px;
+            border-left: 1px solid var(--bd)
+        }
+
+        .kpi:first-child {
+            border-left: 0;
+            padding-left: 0
+        }
+
+        .kpi b {
+            display: block;
+            font-size: 38px;
+            font-weight: 600;
+            line-height: 1.1
+        }
+
+        .kpi span {
+            font-size: 12px;
+            color: var(--mut);
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px
+        }
+
+        .br {
+            display: grid;
+            grid-template-columns: 96px 1fr 30px;
+            align-items: center;
+            gap: 12px;
+            margin: 14px 0
+        }
+
+        .tr {
+            height: 8px;
+            background: var(--bg);
+            border-radius: 99px;
+            overflow: hidden
+        }
+
+        .tr i {
+            display: block;
+            height: 100%;
+            background: var(--acc);
+            border-radius: 99px
+        }
+
+        .br.HIGH .tr i {
+            background: var(--hi)
+        }
+
+        .br b {
+            text-align: right;
+            font-weight: 600
+        }
+
+        .lc {
+            border-left: 3px solid var(--hi);
+            padding: 2px 0 2px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        @media(max-width:800px) {
+            .app {
+                flex-direction: column
+            }
+
+            aside {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: 0;
+                border-bottom: 1px solid var(--bd);
+                padding: 14px 12px 10px;
+                gap: 12px
+            }
+
+            aside nav {
+                flex-direction: row;
+                overflow-x: auto;
+                gap: 4px
+            }
+
+            aside nav button {
+                white-space: nowrap;
+                padding: 9px 14px
+            }
+
+            .bar {
+                padding: 18px 16px 0
+            }
+
+            .bar .mut {
+                display: none
+            }
+
+            main {
+                margin: 12px;
+                padding: 16px
+            }
+
+            .two {
+                grid-template-columns: 1fr;
+                gap: 6px
+            }
+
+            .kpi {
+                flex: 1 1 42%;
+                border-left: 0;
+                padding: 8px 0
+            }
+        }
+
+        .ch {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+            margin-top: 26px
+        }
+
+        .ch svg {
+            max-width: 100%;
+            height: auto
+        }
+
+        .lg {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            font-size: 12.5px;
+            color: var(--mut);
+            margin-top: 6px
+        }
+
+        .lg i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            margin-right: 5px
+        }
+
+        .cb {
+            height: 340px;
+            overflow-y: auto;
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--bg)
+        }
+
+        .m {
+            max-width: 82%;
+            padding: 9px 14px;
+            border-radius: 14px;
+            background: var(--card);
+            border: 1px solid var(--bd);
+            white-space: pre-line
+        }
+
+        .m.u {
+            align-self: flex-end;
+            background: var(--acc);
+            color: var(--accfg);
+            border: 0
+        }
+
+        .cr {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        .cr input {
+            flex: 1
+        }
+
+        .sg {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px
+        }
+
+        .sg button {
+            background: var(--acc2) !important;
+            color: var(--acc) !important;
+            padding: 6px 12px !important;
+            font-size: 13px
+        }
+
+        .hero {
+            background: var(--acc2);
+            border-radius: 14px;
+            padding: 32px 28px;
+            margin-bottom: 8px
+        }
+
+        .hero h2 {
+            display: block !important;
+            margin: 0 0 8px;
+            font-size: 28px;
+            color: var(--acc)
+        }
+
+        .hero p {
+            max-width: 640px;
+            font-size: 15.5px
+        }
+
+        .hero .go {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px
+        }
+
+        .hc {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 8px
+        }
+
+        .hc>div {
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 16px;
+            background: var(--bg)
+        }
+
+        .hc b {
+            display: block;
+            margin-bottom: 4px
+        }
+
+        .hc span {
+            color: var(--mut);
+            font-size: 13.5px
+        }
+
+        .hl {
+            font-size: 22px;
+            font-weight: 650;
+            color: var(--hi)
+        }
+
+        main .hero h2 {
+            display: block
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <aside>
+            <div class="brand">
+                <div class="logo">F</div>
+                <div><b>FLOODCONNECT</b><span>Emergency Management</span></div>
+            </div><script type="module" src=""></script>
+            <nav><button data-t="home">Home</button><button data-t="dash">Dashboard</button><button
+                    data-t="rep">Reports</button><button data-t="queue">Priority Queue</button><button
+                    data-t="camps">Relief Camps</button><button data-t="chat">AI Assistant</button><button
+                    data-t="data">Data</button></nav>
+        </aside>
+        <div class="content">
+            <div class="bar">
+                <h1 id="pt">Dashboard</h1><span class="mut">Smart Emergency Management System</span>
+            </div>
+            <main id="main"></main>
+        </div>
+    </div>
+    <script>
+        const ST = ['Pending', 'In Progress', 'Rescued', 'Closed'], PR = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+        const SR = `101|Rahul|Rajpur Road|Trapped|HIGH|Water entered the house, family on first floor|9876543210|Pending
+102|Priya|Prem Nagar|Medical|MEDIUM|Elderly person needs medicines|9876501234|Pending
+103|Riya|Clement Town|Food and Water|LOW|Stranded without drinking water|9812345678|Pending
+104|Aman|Sahastradhara|Trapped|HIGH|Road washed away, stuck near river|9899001122|Pending`;
+        const SC = `201|Safe Haven|Dehradun|100|45|200|30
+202|Hope Camp|Clement Town|80|60|150|20`;
+        const $ = s => document.querySelector(s);
+        const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const lines = t => t.split('\n').map(l => l.trim()).filter(Boolean).map(l => l.split('|').map(x => x.trim()));
+        const uniq = a => a.filter((x, i) => a.findIndex(y => y.id === x.id) === i);
+        function parseR(t) {
+            return uniq(lines(t).map(p => {
+                if (p.length !== 8) return null; const id = +p[0], sev = p[4].toUpperCase();
+                if (!/^\d{1,9}$/.test(p[0]) || id < 1 || !PR[sev] || !ST.includes(p[7])) return null; return { id, name: p[1], loc: p[2], type: p[3], sev, desc: p[5], tel: p[6], st: p[7] }
+            }).filter(Boolean))
+        }
+        function parseC(t) {
+            return uniq(lines(t).map(p => {
+                if (p.length !== 7 || !p.every((x, i) => i === 1 || i === 2 || /^\d{1,9}$/.test(x))) return null;
+                const [id, cap, beds, food, kits] = [0, 3, 4, 5, 6].map(i => +p[i]); if (id < 1 || beds > cap) return null; return { id, name: p[1], loc: p[2], cap, beds, food, kits }
+            }).filter(Boolean))
+        }
+        const outR = () => S.r.map(r => [r.id, r.name, r.loc, r.type, r.sev, r.desc, r.tel, r.st].join('|')).join('\n');
+        const outC = () => S.c.map(c => [c.id, c.name, c.loc, c.cap, c.beds, c.food, c.kits].join('|')).join('\n');
+        function load() { try { const j = localStorage.getItem('fc1'); if (j) return JSON.parse(j) } catch (e) { } return { r: parseR(SR), c: parseC(SC) } }
+        function save() { try { localStorage.setItem('fc1', JSON.stringify(S)) } catch (e) { } }
+        let S = load(), tab = 'home', msg = '', add = false, q = '';
+        let chat = [{ u: 0, t: "Hello! I am FloodBot. Ask me about reports, the queue or relief camps." }];
+        const HELP = ['Who is next?', 'How many high priority cases?', 'Status of reports', 'How many beds are free?', 'Give me a summary', 'Flood safety tips'];
+        function botReply(x) {
+            const t = x.toLowerCase(), n = queue(), h = (...w) => w.some(k => t.includes(k));
+            if (h('help', 'what can you')) return 'Try: ' + HELP.join(' / ');
+            if (h('next', 'first', 'urgent', 'who')) { const r = n[0]; return r ? `Next to be rescued: #${r.id} ${r.name} at ${r.loc} (${r.type}, ${r.sev}). ${n.length} waiting in the queue.` : 'The priority queue is empty.' }
+            if (h('high', 'critical', 'severe')) return `${cnt(r => r.sev === 'HIGH')} HIGH priority report(s) in total, ${cnt(r => r.sev === 'HIGH' && active(r))} still active.`;
+            if (h('bed', 'camp', 'shelter')) return `${S.c.length} relief camp(s), ${S.c.reduce((a, c) => a + c.beds, 0)} bed(s) available. ` + S.c.map(c => `${c.name}: ${c.beds}/${c.cap} beds`).join('; ');
+            if (h('status', 'pending', 'progress', 'rescued', 'closed')) return ST.map(k => `${k}: ${cnt(r => r.st === k)}`).join(', ');
+            if (h('queue', 'waiting')) return `${n.length} emergencies waiting in the priority queue.`;
+            if (h('summary', 'total', 'how many', 'overview')) return `Total reports: ${S.r.length} | Active: ${cnt(active)} | In queue: ${n.length} | Camps: ${S.c.length}`;
+            if (h('safe', 'tip', 'advice', 'flood')) return 'Move to higher ground, avoid flood water, switch off the main electricity, keep water and medicines ready, call 112 or 1070.';
+            if (h('hello', 'hi', 'hey')) return 'Hello! Type "help" to see what I can answer.';
+            return 'Sorry, I did not understand. Type "help" to see what I can answer.'
+        }
+        const COL = { HIGH: 'var(--hi)', MEDIUM: '#d97706', LOW: 'var(--acc)' };
+        function donut() {
+            const T = S.r.length, R = 60, C = 2 * Math.PI * R; let o = 0; const seg = ['HIGH', 'MEDIUM', 'LOW'].map(k => { const n = cnt(r => r.sev === k), l = T ? n / T * C : 0, e = `<circle r="${R}" cx="80" cy="80" fill="none" stroke="${COL[k]}" stroke-width="24" stroke-dasharray="${l} ${C - l}" stroke-dashoffset="${-o}" transform="rotate(-90 80 80)"/>`; o += l; return e }).join('');
+            return `<div><h3>Severity Split</h3><svg viewBox="0 0 160 160" width="190">${seg}<text x="80" y="86" text-anchor="middle" font-size="26" font-weight="600" fill="currentColor">${T}</text></svg><div class="lg">${['HIGH', 'MEDIUM', 'LOW'].map(k => `<span><i style="background:${COL[k]}"></i>${k} ${cnt(r => r.sev === k)}</span>`).join('')}</div></div>`
+        }
+        function bars(t, data, max) { const w = 300, h = 150, bw = w / data.length; return `<div><h3>${t}</h3><svg viewBox="0 0 ${w} ${h + 34}">${data.map((d, i) => { const bh = max ? d[1] / max * h : 0; return `<rect x="${i * bw + bw * .2}" y="${h - bh}" width="${bw * .6}" height="${bh}" rx="5" fill="var(--acc)"/><text x="${i * bw + bw / 2}" y="${h - bh - 5}" text-anchor="middle" font-size="12" fill="currentColor">${d[1]}</text><text x="${i * bw + bw / 2}" y="${h + 18}" text-anchor="middle" font-size="10.5" fill="var(--mut)">${esc(d[0])}</text>` }).join('')}</svg></div>` }
+        const charts = () => {
+            const st = ST.map(k => [k, cnt(r => r.st === k)]), ca = S.c.map(c => [c.name, c.beds]);
+            return `<div class="ch">${donut()}${bars('Reports by Status', st, Math.max(1, ...st.map(a => a[1])))}${bars('Free Beds per Camp', ca, Math.max(1, ...ca.map(a => a[1])))}</div>`
+        };
+        const active = r => r.st === 'Pending' || r.st === 'In Progress';
+        const queue = () => S.r.map((x, i) => [x, i]).filter(a => a[0].st === 'Pending').sort((a, b) => PR[a[0].sev] - PR[b[0].sev] || a[1] - b[1]).map(a => a[0]);
+        const nextId = a => a.reduce((m, x) => Math.max(m, x.id), 0) + 1;
+        const cnt = (f) => S.r.filter(f).length;
+
+        const sv = s => `<span class="tag ${s}">${s}</span>`;
+        const msgd = () => `<div id="msg" class="${msg[0] === '!' ? 'err' : 'ok'}">${esc(msg.slice(1))}</div>`;
+        const row = (l, n) => `<tr><td>${l}</td><td>${n}</td></tr>`;
+        const V = {
+            home() {
+                const k = (n, l) => `<div class="kpi"><b>${n}</b><span>${l}</span></div>`, c = (t, d) => `<div><b>${t}</b><span>${d}</span></div>`;
+                return `<div class="hero"><h2>Welcome to FloodConnect</h2><p>A smart emergency management system for flood response. Citizens' emergency reports are collected, ranked by urgency and sent to rescue teams, while relief camps and their resources are tracked in one place.</p>
+ <div class="go"><button data-t="dash">Open Dashboard</button><button data-t="rep">Report an Emergency</button><button data-t="chat">Ask FloodBot</button></div></div>
+ <h3>Live Snapshot</h3><div class="kpis">${k(cnt(active), 'Active Cases')}${k(queue().length, 'Waiting in Queue')}${k(S.c.length, 'Relief Camps')}${k(S.c.reduce((a, c) => a + c.beds, 0), 'Beds Available')}</div>
+ <h3>What You Can Do</h3><div class="hc">${c('Emergency Reports', 'Register, search, update and delete flood emergency reports.')}${c('Priority Queue', 'The most urgent case (HIGH first, then MEDIUM, LOW) is always rescued first.')}${c('Relief Camps', 'Track beds, food packets and medical kits at every camp.')}${c('Dashboard and Graphs', 'See totals and charts of cases by severity and status.')}${c('FloodBot Assistant', 'Ask questions about reports, the queue and camps.')}</div>
+ <h3>How It Works</h3><div class="hc">${c('1. Report', 'A victim or volunteer submits a report with location, type and severity.')}${c('2. Prioritise', 'The report joins the queue, sorted by severity. Same severity: first come, first served.')}${c('3. Rescue', 'The highest-priority case is processed and a rescue team is assigned.')}${c('4. Shelter', 'Rescued people are directed to relief camps with free beds and supplies.')}</div>
+ <h3>Emergency Helplines</h3><div class="hc">${c('112', 'National emergency number')}${c('1070', 'Uttarakhand State Disaster Control Room')}${c('1077', 'District Control Room')}${c('108', 'Ambulance')}</div>
+ <h3>Built With</h3><p class="mut">Object-Oriented Programming (classes and encapsulation) and Data Structures: a singly linked list for reports, a sorted linked-list priority queue for urgency, and a dynamic array (vector) for camps. Data is stored in text files.</p>`},
+            dash() {
+                const h = S.r.filter(r => r.sev === 'HIGH' && active(r)).pop(), T = S.r.length;
+                const k = (n, l) => `<div class="kpi"><b>${n}</b><span>${l}</span></div>`;
+                const br = (l, n, c) => `<div class="br ${c || ''}"><span>${l}</span><div class="tr"><i style="width:${T ? n / T * 100 : 0}%"></i></div><b>${n}</b></div>`;
+                return `<h2>Rescue Dashboard</h2><div class="kpis">${k(T, 'Total Reports')}${k(cnt(active), 'Active Cases')}${k(queue().length, 'In Queue')}${k(S.c.length, 'Relief Camps')}${k(S.c.reduce((a, c) => a + c.beds, 0), 'Beds Available')}</div>
+ <div class="two"><div><h3>By Priority</h3>${br('High', cnt(r => r.sev === 'HIGH'), 'HIGH')}${br('Medium', cnt(r => r.sev === 'MEDIUM'))}${br('Low', cnt(r => r.sev === 'LOW'))}</div>
+ <div><h3>By Status</h3>${ST.map(x => br(x, cnt(r => r.st === x))).join('')}</div></div>
+ <h3 style="margin-top:26px">Latest Active High Priority Case</h3>${h ? `<div class="lc"><div><b>#${h.id} ${esc(h.name)}</b><div class="mut">${esc(h.loc)} · ${esc(h.type)}</div></div><div>${sv(h.sev)} <span class="tag">${h.st}</span></div></div>` : '<p class="mut">No active HIGH priority case right now.</p>'}${charts()}`
+            },
+            rep() {
+                return `<h2>Emergency Report Management</h2><button data-a="toggle">${add ? 'Cancel' : 'Add Report'}</button>
+ &nbsp;Search: <input id="q" placeholder="ID, name or location" value="${esc(q)}">${msgd()}${add ? repForm() : ''}<div id="list"></div>`
+            },
+            queue() {
+                const L = queue(); return `<h2>Priority Management</h2><button data-a="process" ${L.length ? '' : 'disabled'}>Process Highest-Priority Emergency</button>${msgd()}
+ ${L.length ? `<div class="w"><table><tr><th>Priority</th><th>ID</th><th>Victim</th><th>Location</th><th>Severity</th></tr>${L.map(r => `<tr><td>${PR[r.sev]}</td><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.loc)}</td><td>${sv(r.sev)}</td></tr>`).join('')}</table></div><p>Emergencies waiting: ${L.length}</p>` : '<p>The priority queue is empty. Nothing to process.</p>'}`
+            },
+            camps() {
+                return `<h2>Relief Camp Management</h2><button data-a="toggle">${add ? 'Cancel' : 'Add Camp'}</button>${msgd()}${add ? campForm() : ''}
+ ${S.c.length ? `<div class="w"><table><tr><th>ID</th><th>Name</th><th>Location</th><th>Capacity</th><th>Available Beds</th><th>Food Packets</th><th>Medical Kits</th><th></th></tr>${S.c.map(c => `<tr><td>${c.id}</td><td>${esc(c.name)}</td><td>${esc(c.loc)}</td><td>${c.cap}</td><td><input type="number" min="0" id="b${c.id}" value="${c.beds}"></td><td><input type="number" min="0" id="f${c.id}" value="${c.food}"></td><td><input type="number" min="0" id="k${c.id}" value="${c.kits}"></td><td><button data-a="upc" data-id="${c.id}">Update</button></td></tr>`).join('')}</table></div><p>Total camps: ${S.c.length}</p>` : '<p>No relief camps found.</p>'}`
+            },
+            chat() {
+                return `<h2>FloodBot</h2><div class="cb" id="cb">${chat.map(m => `<div class="m${m.u ? ' u' : ''}">${esc(m.t)}</div>`).join('')}</div>
+ <div class="cr"><input id="ci" placeholder="Ask about reports, queue, camps..." autocomplete="off"><button data-a="send">Send</button></div>
+ <div class="sg">${HELP.map(h => `<button data-a="ask" data-q="${h}">${h}</button>`).join('')}</div>`
+            },
+            data() {
+                return `<h2>Data Files</h2><p>Same format as reports.txt and camps.txt (fields separated by |).</p>
+ <h3>reports.txt</h3><textarea id="tr">${esc(outR())}</textarea><button data-a="lr">Load Reports</button> <button data-a="cp" data-s="#tr">Copy</button>
+ <h3>camps.txt</h3><textarea id="tc">${esc(outC())}</textarea><button data-a="lc">Load Camps</button> <button data-a="cp" data-s="#tc">Copy</button>
+ ${msgd()}<h3>Reset</h3><button data-a="reset">Restore Sample Data</button>`
+            }
+        };
+        function listR() {
+            const k = q.toLowerCase(); const L = S.r.filter(r => !k || String(r.id) === k || r.name.toLowerCase().includes(k) || r.loc.toLowerCase().includes(k));
+            $('#list').innerHTML = L.length ? `<div class="w"><table><tr><th>ID</th><th>Victim</th><th>Location</th><th>Type</th><th>Severity</th><th>Description</th><th>Contact</th><th>Status</th><th></th></tr>${L.map(r => `<tr><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.loc)}</td><td>${esc(r.type)}</td><td>${sv(r.sev)}</td><td>${esc(r.desc)}</td><td>${esc(r.tel)}</td><td><select data-a="st" data-id="${r.id}">${ST.map(x => `<option${x === r.st ? ' selected' : ''}>${x}</option>`).join('')}</select></td><td><button data-a="del" data-id="${r.id}">Delete</button></td></tr>`).join('')}</table></div><p>Total reports: ${S.r.length}</p>` : '<p>No reports found.</p>'
+        }
+        const fr = (l, i) => `<tr><td>${l}</td><td>${i}</td></tr>`;
+        function repForm() { return `<table class="f">${fr('Report ID', `<input id="f_id" type="number" value="${nextId(S.r)}">`)}${fr('Victim Name', '<input id="f_name">')}${fr('Location', '<input id="f_loc">')}${fr('Emergency Type', '<input id="f_type">')}${fr('Severity', '<select id="f_sev"><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select>')}${fr('Description', '<input id="f_desc">')}${fr('Contact Number (10 digits)', '<input id="f_tel" inputmode="numeric" maxlength="10">')}</table><button data-a="addr">Save Report</button>` }
+        function campForm() { return `<table class="f">${fr('Camp ID', `<input id="c_id" type="number" value="${nextId(S.c)}">`)}${fr('Camp Name', '<input id="c_name">')}${fr('Location', '<input id="c_loc">')}${fr('Capacity', '<input id="c_cap" type="number" min="1">')}${fr('Available Beds', '<input id="c_beds" type="number" min="0">')}${fr('Food Packets', '<input id="c_food" type="number" min="0" value="0">')}${fr('Medical Kits', '<input id="c_kits" type="number" min="0" value="0">')}</table><button data-a="addc">Save Camp</button>` }
+        const v = id => ($(id).value || '').trim().replace(/\|/g, '/'), num = id => { const s = $(id).value.trim(); return /^\d{1,9}$/.test(s) ? +s : -1 };
+        const A = {
+            toggle() { add = !add; msg = ''; render() },
+            addr() {
+                const id = num('#f_id'), r = { id, name: v('#f_name'), loc: v('#f_loc'), type: v('#f_type'), sev: $('#f_sev').value, desc: v('#f_desc'), tel: v('#f_tel'), st: 'Pending' };
+                if (id < 1) return err('Enter a valid report ID.'); if (S.r.some(x => x.id === id)) return err(`Report ID ${id} already exists. Use a different ID.`);
+                if (!r.name || !r.loc || !r.type || !r.desc) return err('All fields are required.'); if (!/^\d{10}$/.test(r.tel)) return err('Contact number must be exactly 10 digits.');
+                S.r.push(r); save(); add = false; msg = `?Report #${id} added to the priority queue (Priority ${PR[r.sev]}).`; render()
+            },
+            st(d, el) { const r = S.r.find(x => x.id == d.id); r.st = el.value; save(); msg = `?Report #${r.id} is now ${r.st}.`; render() },
+            del(d) { const r = S.r.find(x => x.id == d.id); if (!confirm(`Delete report #${r.id} (${r.name})?`)) return; S.r = S.r.filter(x => x !== r); save(); msg = `?Report #${r.id} deleted.`; render() },
+            process() { const r = queue()[0]; if (!r) return; r.st = 'In Progress'; save(); msg = `?Rescue team assigned to #${r.id} ${r.name}, ${r.loc} (${r.sev}). Status: In Progress.`; render() },
+            addc() {
+                const c = { id: num('#c_id'), name: v('#c_name'), loc: v('#c_loc'), cap: num('#c_cap'), beds: num('#c_beds'), food: num('#c_food'), kits: num('#c_kits') };
+                if (c.id < 1) return err('Enter a valid camp ID.'); if (S.c.some(x => x.id === c.id)) return err(`Camp ID ${c.id} already exists.`);
+                if (!c.name || !c.loc) return err('Name and location are required.'); if (c.cap < 1 || c.beds < 0 || c.food < 0 || c.kits < 0) return err('Enter whole numbers; capacity must be at least 1.');
+                if (c.beds > c.cap) return err('Available beds cannot exceed capacity.'); S.c.push(c); save(); add = false; msg = `?Camp #${c.id} added.`; render()
+            },
+            upc(d) {
+                const c = S.c.find(x => x.id == d.id), b = num('#b' + c.id), f = num('#f' + c.id), k = num('#k' + c.id);
+                if (b < 0 || f < 0 || k < 0) return err('Enter whole numbers, 0 or more.'); if (b > c.cap) return err(`Beds cannot exceed capacity (${c.cap}).`);
+                c.beds = b; c.food = f; c.kits = k; save(); msg = `?Camp #${c.id} updated.`; render()
+            },
+            lr() { const a = parseR($('#tr').value); S.r = a; save(); msg = `?Loaded ${a.length} report(s). Invalid or duplicate lines were skipped.`; render() },
+            lc() { const a = parseC($('#tc').value); S.c = a; save(); msg = `?Loaded ${a.length} camp(s). Invalid or duplicate lines were skipped.`; render() },
+            cp(d) { const t = $(d.s); t.select(); try { navigator.clipboard.writeText(t.value); msg = '?Copied.' } catch (e) { msg = '!Select the text and copy it manually.' } render() },
+            send() { const i = $('#ci'), t = i.value.trim(); if (t) A.ask({ q: t }) },
+            ask(d) { chat.push({ u: 1, t: d.q }, { u: 0, t: botReply(d.q) }); render() },
+            reset() { if (!confirm('Replace all data with the sample data?')) return; S = { r: parseR(SR), c: parseC(SC) }; save(); msg = '?Sample data restored.'; render() }
+        };
+        function err(m) { msg = '!' + m; const e = $('#msg'); if (e) { e.className = 'err'; e.textContent = m } else render() }
+        const TT = { home: 'Home', dash: 'Dashboard', rep: 'Emergency Reports', queue: 'Priority Queue', camps: 'Relief Camps', chat: 'FloodBot Assistant', data: 'Data Files' };
+        function render() {
+            document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+            $('#pt').textContent = TT[tab]; $('#main').innerHTML = V[tab](); if (tab === 'rep') listR(); if (tab === 'chat') { const b = $('#cb'); b.scrollTop = b.scrollHeight; if (chat.length > 1) $('#ci').focus() }
+        }
+        document.addEventListener('click', e => {
+            const t = e.target.closest('[data-t]'); if (t) { tab = t.dataset.t; add = false; msg = ''; render(); scrollTo(0, 0); return }
+            const b = e.target.closest('button[data-a]'); if (b) A[b.dataset.a](b.dataset, b)
+        });
+        document.addEventListener('change', e => { if (e.target.tagName === 'SELECT' && e.target.dataset.a) A[e.target.dataset.a](e.target.dataset, e.target) });
+        document.addEventListener('input', e => { if (e.target.id === 'q') { q = e.target.value.trim(); listR() } });
+        document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'ci') A.send() });
+        render();
+    </script>
+</body>
+
+</html>

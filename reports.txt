@@ -1,0 +1,4 @@
+101|Rahul|Rajpur Road|Trapped|HIGH|Water entered the house, family on first floor|9876543210|Pending
+102|Priya|Prem Nagar|Medical|MEDIUM|Elderly person needs medicines|9876501234|Pending
+103|Riya|Clement Town|Food and Water|LOW|Stranded without drinking water|9812345678|Pending
+104|Aman|Sahastradhara|Trapped|HIGH|Road washed away, stuck near river|9899001122|Pending
