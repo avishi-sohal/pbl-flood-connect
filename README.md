@@ -85,10 +85,10 @@ Run the program from inside the project folder so it can access `reports.txt` an
 
 ## Team Members
 
+- **Abhiroop Joshi**
 - **Avishi Sohal**
-- **Abhrioop**
-- **Simmi**
-- **Mouli**
+- **Simmi Dhyani**
+- **Mouli Dhyani**
 
 ## Future Enhancements
 
