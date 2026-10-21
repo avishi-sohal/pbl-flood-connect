@@ -71,7 +71,7 @@ g++ main.cpp EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp 
 **Windows (PowerShell):**
 
 ```powershell
-.\FloodConnect.exe
+./FloodConnect.exe
 ```
 
 **Linux/macOS:**
