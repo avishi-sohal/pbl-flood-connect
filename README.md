@@ -77,7 +77,7 @@ g++ main.cpp EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp 
 **Linux/macOS:**
 
 ```bash
-./FloodConnect.exe
+./FloodConnect
 ```
 
 Run the program from inside the project folder so it can access `reports.txt` and `camps.txt`. If the data files are missing, the program starts with empty data and creates the files when saving.
