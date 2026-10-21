@@ -2,8 +2,7 @@
 #include <iostream>
 using namespace std;
 
-// Draws one text bar, e.g.  HIGH    | ##########  2
-// Each '#' is one block; the bar is scaled so the biggest value never exceeds 30 blocks.
+
 static void drawBar(const string& label, int value, int maxValue) {
     const int MAX_BLOCKS = 30;
     int blocks = (maxValue > 0) ? (value * MAX_BLOCKS) / maxValue : 0;
@@ -58,7 +57,7 @@ void Dashboard::show() const {
     } else {
         cout << "No active HIGH priority case right now.\n";
     }
-    // ---------- GRAPHS (text bar charts) ----------
+    
     cout << "\n----------------------------------------\n";
     cout << "GRAPH 1: REPORTS BY SEVERITY\n";
     cout << "----------------------------------------\n";
