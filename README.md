@@ -42,39 +42,46 @@ FloodConnect/
 
 ## How to Run
 
-**Prerequisites:** Install a C++ compiler such as g++ and ensure it is available in your terminal.
+### Prerequisites
 
-1. Clone the repository:
+Install a C++ compiler such as `g++` and ensure it is available in your terminal.
 
-   ```bash
-   git clone <repository-url>
-   ```
+### 1. Clone the repository
 
-2. Open the project folder:
+```bash
+git clone https://github.com/avishi-sohal/pbl-flood-connect.git
+```
 
-   ```bash
-   cd FloodConnect
-   ```
+### 2. Open the project folder
 
-3. Compile the program:
+```bash
+cd pbl-flood-connect
+```
 
-   ```bash
-  g++ main.cpp EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp ChatBot.cpp -o FloodConnect.exe
-   ```
+### 3. Compile the program
 
-4. Run the program:
+Run this command from inside the project folder:
 
-   **Linux/macOS**
-   ```bash
-   ./FloodConnect
-   ```
+```bash
+g++ main.cpp EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp ChatBot.cpp -o FloodConnect.exe
+```
 
-   **Windows**
-   ```bash
-   ./FloodConnect.exe
-   ```
+### 4. Run the program
+
+**Windows (PowerShell):**
+
+```powershell
+.\FloodConnect.exe
+```
+
+**Linux/macOS:**
+
+```bash
+./FloodConnect.exe
+```
 
 Run the program from inside the project folder so it can access `reports.txt` and `camps.txt`. If the data files are missing, the program starts with empty data and creates the files when saving.
+
 
 ## Team Members
 
