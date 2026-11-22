@@ -1,11 +1,22 @@
-# make        builds the program (run ./FloodConnect from inside this folder)
-# make test   builds and runs the automated tests
-LIB = EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp ChatBot.cpp FloodGuide.cpp \
-      RoadGraph.cpp Allocation.cpp ImageAnalysis.cpp UndoManager.cpp
-FLAGS = -Wall -Wextra -pedantic
+CXX ?= g++
+CXXFLAGS ?= -std=c++11 -Wall -Wextra -pedantic
+SOURCES = EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp ChatBot.cpp \
+	FloodGuide.cpp RoadGraph.cpp Allocation.cpp ImageAnalysis.cpp UndoManager.cpp
+HEADERS = $(wildcard *.h)
+APP = FloodConnect.exe
+TEST = run_tests.exe
 
-FloodConnect: main.cpp $(LIB) $(wildcard *.h)
-	g++ $(FLAGS) main.cpp $(LIB) -o FloodConnect
+.PHONY: all test clean
+all: $(APP)
 
-test: tests.cpp $(LIB) $(wildcard *.h)
-	g++ $(FLAGS) tests.cpp $(LIB) -o run_tests && ./run_tests
+$(APP): main.cpp $(SOURCES) $(HEADERS)
+	$(CXX) $(CXXFLAGS) main.cpp $(SOURCES) -o $@
+
+$(TEST): tests.cpp $(SOURCES) $(HEADERS)
+	$(CXX) $(CXXFLAGS) tests.cpp $(SOURCES) -o $@
+
+test: $(TEST)
+	./$(TEST)
+
+clean:
+	$(RM) $(APP) $(TEST) *.o

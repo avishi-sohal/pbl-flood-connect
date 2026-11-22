@@ -64,6 +64,10 @@ public:
     // for the dashboard
     int getCampCount() const;
     int getTotalAvailableBeds() const;
+    ReliefCamp& campAt(int index);
+    const ReliefCamp& campAt(int index) const;
+    void snapshot(vector<string>& out) const;
+    void restore(const vector<string>& data);
 };
 
 #endif

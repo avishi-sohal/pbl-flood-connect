@@ -200,3 +200,20 @@ int CampManager::getTotalAvailableBeds() const {
         total += camps[i].getAvailableBeds();
     return total;
 }
+
+ReliefCamp& CampManager::campAt(int index) { return camps.at((size_t)index); }
+const ReliefCamp& CampManager::campAt(int index) const { return camps.at((size_t)index); }
+
+void CampManager::snapshot(vector<string>& out) const {
+    out.clear();
+    for (size_t i = 0; i < camps.size(); ++i) out.push_back(camps[i].toFileLine());
+}
+
+void CampManager::restore(const vector<string>& data) {
+    camps.clear();
+    for (size_t i = 0; i < data.size(); ++i) {
+        ReliefCamp c;
+        if (ReliefCamp::fromFileLine(data[i], c)) camps.push_back(c);
+    }
+    saveToFile();
+}

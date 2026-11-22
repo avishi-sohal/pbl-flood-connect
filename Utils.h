@@ -9,7 +9,10 @@
 #include <string>
 #include <cstdlib>
 #include <cctype>
+#include <sstream>
 using namespace std;
+
+inline string toString(int value) { ostringstream out; out << value; return out.str(); }
 
 // Remove spaces/tabs/newlines from both ends of a string
 inline string trim(const string& s) {
@@ -22,6 +25,11 @@ inline string trim(const string& s) {
 inline string toUpper(string s) {
     for (size_t i = 0; i < s.size(); i++)
         s[i] = (char)toupper((unsigned char)s[i]);
+    return s;
+}
+
+inline string toLowerCase(string s) {
+    for (size_t i = 0; i < s.size(); i++) s[i] = (char)tolower((unsigned char)s[i]);
     return s;
 }
 

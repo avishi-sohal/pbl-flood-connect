@@ -111,6 +111,4 @@ Open `FloodConnect_phase3.html` in a modern web browser.
 - Resource allocation is greedy, not globally optimal.
 - Designed as a single-user prototype.
 
-## Documentation
 
-See [`PRESENTATION_NOTES.md`](PRESENTATION_NOTES.md) for the demonstration flow and evaluator Q&A.

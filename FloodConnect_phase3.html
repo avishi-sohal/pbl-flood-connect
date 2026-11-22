@@ -1,352 +1,1043 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<title>FloodConnect</title>
-<style>
-:root{--bg:#f5f7fa;--card:#fff;--fg:#1b2432;--mut:#6b7686;--bd:#e6eaf0;--acc:#0f766e;--acc2:#e3f3f0;--accfg:#fff;--hi:#b42318;--hib:#fdecea;--ok:#157347;--err:#b42318;--sh:0 1px 2px rgba(16,24,40,.05),0 10px 28px rgba(16,24,40,.06);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1520;--card:#151f2d;--fg:#e8eef6;--mut:#92a1b5;--bd:#243245;--acc:#2dd4bf;--acc2:#12312f;--accfg:#06201d;--hi:#ff8a7a;--hib:#3a1e1c;--ok:#7fd68a;--err:#ff8a7a}}
-:root[data-theme="dark"]{--bg:#0e1520;--card:#151f2d;--fg:#e8eef6;--mut:#92a1b5;--bd:#243245;--acc:#2dd4bf;--acc2:#12312f;--accfg:#06201d;--hi:#ff8a7a;--hib:#3a1e1c;--ok:#7fd68a;--err:#ff8a7a}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--fg);font:14.5px/1.5 Inter,"Segoe UI",system-ui,Arial,sans-serif}
-.app{display:flex;min-height:100vh}
-aside{width:244px;flex:none;background:var(--card);border-right:1px solid var(--bd);padding:24px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:28px}
-.brand{display:flex;gap:11px;align-items:center;padding:0 8px}
-.logo{width:40px;height:40px;border-radius:11px;background:var(--acc);color:var(--accfg);display:grid;place-items:center;font-weight:700;font-size:19px}
-.brand b{display:block;font-size:15px;letter-spacing:.5px}.brand span{font-size:12px;color:var(--mut)}
-aside nav{display:flex;flex-direction:column;gap:4px}
-aside nav button{text-align:left;border:0;border-radius:10px;padding:11px 14px;background:transparent;color:var(--mut);font:inherit;font-weight:500;cursor:pointer;transition:.15s}
-aside nav button:hover{background:var(--bg);color:var(--fg)}
-aside nav button.on{background:var(--acc2);color:var(--acc);font-weight:600}
-.content{flex:1;min-width:0}
-.bar{padding:26px 32px 2px}.bar h1{margin:0;font-size:25px;font-weight:650;letter-spacing:-.2px}.bar .mut{font-size:13.5px}
-main{margin:18px 32px 32px;padding:26px;background:var(--card);border-radius:16px;box-shadow:var(--sh)}
-main>*{animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-main>h2{display:none}h3{font-size:15px;font-weight:600;margin:22px 0 10px}p{margin:8px 0}.mut{color:var(--mut)}
-.w{overflow-x:auto}
-table{width:100%;border-collapse:collapse;margin:8px 0}
-th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--bd)}
-td{padding:14px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}tr:last-child td{border-bottom:0}tbody tr:hover td,tr:hover>td{background:var(--bg)}
-.f{max-width:560px}.f td{border-bottom:0;padding:7px 12px 7px 0}.f td:first-child{width:38%;color:var(--mut)}.f input,.f select{width:100%}
-input,select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 12px}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc2)}
-#q{width:250px;max-width:100%;margin-left:6px}td input[type=number]{width:80px}td select{padding:6px 10px}textarea{width:100%;height:120px;font:12px/1.4 ui-monospace,monospace}
-main button{font:inherit;font-weight:500;background:var(--acc);color:var(--accfg);border:0;border-radius:10px;padding:9px 18px;cursor:pointer;transition:filter .15s,transform .1s}
-main button:hover{filter:brightness(1.08)}main button:active{transform:scale(.97)}main button:disabled{opacity:.4;cursor:not-allowed}
-main button[data-a="del"]{background:transparent;color:var(--hi);padding:6px 12px}main button[data-a="del"]:hover{background:var(--hib)}
-.tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 11px;border-radius:99px;background:var(--bg);color:var(--mut);border:1px solid var(--bd)}
-.tag.HIGH{background:var(--hib);color:var(--hi);border-color:transparent}
-.err{color:var(--err);background:var(--hib);border-radius:10px;padding:10px 14px;margin:12px 0}.ok{color:var(--ok);margin:10px 0}.ok:empty,.err:empty{display:none}
-.kpis{display:flex;flex-wrap:wrap;margin-bottom:28px}
-.kpi{flex:1 1 140px;padding:4px 24px;border-left:1px solid var(--bd)}.kpi:first-child{border-left:0;padding-left:0}
-.kpi b{display:block;font-size:38px;font-weight:600;line-height:1.1}.kpi span{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:40px}
-.br{display:grid;grid-template-columns:96px 1fr 30px;align-items:center;gap:12px;margin:14px 0}
-.tr{height:8px;background:var(--bg);border-radius:99px;overflow:hidden}.tr i{display:block;height:100%;background:var(--acc);border-radius:99px}
-.br.HIGH .tr i{background:var(--hi)}.br b{text-align:right;font-weight:600}
-.lc{border-left:3px solid var(--hi);padding:2px 0 2px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-@media(max-width:800px){.app{flex-direction:column}
-aside{width:100%;height:auto;position:static;border-right:0;border-bottom:1px solid var(--bd);padding:14px 12px 10px;gap:12px}
-aside nav{flex-direction:row;overflow-x:auto;gap:4px}aside nav button{white-space:nowrap;padding:9px 14px}
-.bar{padding:18px 16px 0}.bar .mut{display:none}main{margin:12px;padding:16px}
-.two{grid-template-columns:1fr;gap:6px}.kpi{flex:1 1 42%;border-left:0;padding:8px 0}}
-.ch{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px;margin-top:26px}
-.ch svg{max-width:100%;height:auto}.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:6px}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
-.cb{height:340px;overflow-y:auto;border:1px solid var(--bd);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
-.m{max-width:82%;padding:9px 14px;border-radius:14px;background:var(--card);border:1px solid var(--bd);white-space:pre-line}.m.u{align-self:flex-end;background:var(--acc);color:var(--accfg);border:0}
-.cr{display:flex;gap:8px;margin-top:12px}.cr input{flex:1}.sg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sg button{background:var(--acc2)!important;color:var(--acc)!important;padding:6px 12px!important;font-size:13px}
-.hero{background:var(--acc2);border-radius:14px;padding:32px 28px;margin-bottom:8px}.hero h2{display:block!important;margin:0 0 8px;font-size:28px;color:var(--acc)}.hero p{max-width:640px;font-size:15.5px}.hero .go{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.hc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:8px}.hc>div{border:1px solid var(--bd);border-radius:12px;padding:16px;background:var(--bg)}.hc b{display:block;margin-bottom:4px}.hc span{color:var(--mut);font-size:13.5px}
-.hl{font-size:22px;font-weight:650;color:var(--hi)}main .hero h2{display:block}
-</style></head><body>
-<div class="app"><aside><div class="brand"><div class="logo">F</div><div><b>FLOODCONNECT</b><span>Emergency Management</span></div></div><nav><button data-t="home">Home</button><button data-t="dash">Dashboard</button><button data-t="rep">Reports</button><button data-t="queue">Priority Queue</button><button data-t="camps">Relief Camps</button><button data-t="route">Rescue Routes</button><button data-t="alloc">Allocation</button><button data-t="img">Flood Image</button><button data-t="chat">Assistant</button><button data-t="data">Data</button></nav><div id="um"></div></aside><div class="content"><div class="bar"><h1 id="pt">Dashboard</h1><span class="mut">Smart Emergency Management System</span></div><main id="main"></main></div></div>
-<script>
-const ST=['Pending','In Progress','Rescued','Closed'],PR={HIGH:1,MEDIUM:2,LOW:3};
-const SR=`101|Rahul|Rajpur Road|Trapped|HIGH|Water entered the house, family on first floor|9876543210|Pending
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>FloodConnect</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #fff;
+      --fg: #1b2432;
+      --mut: #6b7686;
+      --bd: #e6eaf0;
+      --acc: #0f766e;
+      --acc2: #e3f3f0;
+      --accfg: #fff;
+      --hi: #b42318;
+      --hib: #fdecea;
+      --ok: #157347;
+      --err: #b42318;
+      --sh: 0 1px 2px rgba(16, 24, 40, .05), 0 10px 28px rgba(16, 24, 40, .06);
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    @media(prefers-color-scheme:dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0e1520;
+        --card: #151f2d;
+        --fg: #e8eef6;
+        --mut: #92a1b5;
+        --bd: #243245;
+        --acc: #2dd4bf;
+        --acc2: #12312f;
+        --accfg: #06201d;
+        --hi: #ff8a7a;
+        --hib: #3a1e1c;
+        --ok: #7fd68a;
+        --err: #ff8a7a
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0e1520;
+      --card: #151f2d;
+      --fg: #e8eef6;
+      --mut: #92a1b5;
+      --bd: #243245;
+      --acc: #2dd4bf;
+      --acc2: #12312f;
+      --accfg: #06201d;
+      --hi: #ff8a7a;
+      --hib: #3a1e1c;
+      --ok: #7fd68a;
+      --err: #ff8a7a
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 14.5px/1.5 Inter, "Segoe UI", system-ui, Arial, sans-serif
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh
+    }
+
+    aside {
+      width: 244px;
+      flex: none;
+      background: var(--card);
+      border-right: 1px solid var(--bd);
+      padding: 24px 14px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 28px
+    }
+
+    .brand {
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      padding: 0 8px
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--acc);
+      color: var(--accfg);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 19px
+    }
+
+    .brand b {
+      display: block;
+      font-size: 15px;
+      letter-spacing: .5px
+    }
+
+    .brand span {
+      font-size: 12px;
+      color: var(--mut)
+    }
+
+    aside nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    aside nav button {
+      text-align: left;
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      background: transparent;
+      color: var(--mut);
+      font: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    aside nav button:hover {
+      background: var(--bg);
+      color: var(--fg)
+    }
+
+    aside nav button.on {
+      background: var(--acc2);
+      color: var(--acc);
+      font-weight: 600
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0
+    }
+
+    .bar {
+      padding: 26px 32px 2px
+    }
+
+    .bar h1 {
+      margin: 0;
+      font-size: 25px;
+      font-weight: 650;
+      letter-spacing: -.2px
+    }
+
+    .bar .mut {
+      font-size: 13.5px
+    }
+
+    main {
+      margin: 18px 32px 32px;
+      padding: 26px;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--sh)
+    }
+
+    main>* {
+      animation: fade .25s ease
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(5px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    main>h2 {
+      display: none
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 22px 0 10px
+    }
+
+    p {
+      margin: 8px 0
+    }
+
+    .mut {
+      color: var(--mut)
+    }
+
+    .w {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0
+    }
+
+    th {
+      text-align: left;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--mut);
+      font-weight: 600;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--bd)
+    }
+
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--bd);
+      vertical-align: middle
+    }
+
+    tr:last-child td {
+      border-bottom: 0
+    }
+
+    tbody tr:hover td,
+    tr:hover>td {
+      background: var(--bg)
+    }
+
+    .f {
+      max-width: 560px
+    }
+
+    .f td {
+      border-bottom: 0;
+      padding: 7px 12px 7px 0
+    }
+
+    .f td:first-child {
+      width: 38%;
+      color: var(--mut)
+    }
+
+    .f input,
+    .f select {
+      width: 100%
+    }
+
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: var(--fg);
+      background: var(--bg);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 9px 12px
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 0;
+      border-color: var(--acc);
+      box-shadow: 0 0 0 3px var(--acc2)
+    }
+
+    #q {
+      width: 250px;
+      max-width: 100%;
+      margin-left: 6px
+    }
+
+    td input[type=number] {
+      width: 80px
+    }
+
+    td select {
+      padding: 6px 10px
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      font: 12px/1.4 ui-monospace, monospace
+    }
+
+    main button {
+      font: inherit;
+      font-weight: 500;
+      background: var(--acc);
+      color: var(--accfg);
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 18px;
+      cursor: pointer;
+      transition: filter .15s, transform .1s
+    }
+
+    main button:hover {
+      filter: brightness(1.08)
+    }
+
+    main button:active {
+      transform: scale(.97)
+    }
+
+    main button:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    main button[data-a="del"] {
+      background: transparent;
+      color: var(--hi);
+      padding: 6px 12px
+    }
+
+    main button[data-a="del"]:hover {
+      background: var(--hib)
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 11px;
+      border-radius: 99px;
+      background: var(--bg);
+      color: var(--mut);
+      border: 1px solid var(--bd)
+    }
+
+    .tag.HIGH {
+      background: var(--hib);
+      color: var(--hi);
+      border-color: transparent
+    }
+
+    .err {
+      color: var(--err);
+      background: var(--hib);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 12px 0
+    }
+
+    .ok {
+      color: var(--ok);
+      margin: 10px 0
+    }
+
+    .ok:empty,
+    .err:empty {
+      display: none
+    }
+
+    .kpis {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 28px
+    }
+
+    .kpi {
+      flex: 1 1 140px;
+      padding: 4px 24px;
+      border-left: 1px solid var(--bd)
+    }
+
+    .kpi:first-child {
+      border-left: 0;
+      padding-left: 0
+    }
+
+    .kpi b {
+      display: block;
+      font-size: 38px;
+      font-weight: 600;
+      line-height: 1.1
+    }
+
+    .kpi span {
+      font-size: 12px;
+      color: var(--mut);
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px
+    }
+
+    .br {
+      display: grid;
+      grid-template-columns: 96px 1fr 30px;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0
+    }
+
+    .tr {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 99px;
+      overflow: hidden
+    }
+
+    .tr i {
+      display: block;
+      height: 100%;
+      background: var(--acc);
+      border-radius: 99px
+    }
+
+    .br.HIGH .tr i {
+      background: var(--hi)
+    }
+
+    .br b {
+      text-align: right;
+      font-weight: 600
+    }
+
+    .lc {
+      border-left: 3px solid var(--hi);
+      padding: 2px 0 2px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    @media(max-width:800px) {
+      .app {
+        flex-direction: column
+      }
+
+      aside {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: 0;
+        border-bottom: 1px solid var(--bd);
+        padding: 14px 12px 10px;
+        gap: 12px
+      }
+
+      aside nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 4px
+      }
+
+      aside nav button {
+        white-space: nowrap;
+        padding: 9px 14px
+      }
+
+      .bar {
+        padding: 18px 16px 0
+      }
+
+      .bar .mut {
+        display: none
+      }
+
+      main {
+        margin: 12px;
+        padding: 16px
+      }
+
+      .two {
+        grid-template-columns: 1fr;
+        gap: 6px
+      }
+
+      .kpi {
+        flex: 1 1 42%;
+        border-left: 0;
+        padding: 8px 0
+      }
+    }
+
+    .ch {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      margin-top: 26px
+    }
+
+    .ch svg {
+      max-width: 100%;
+      height: auto
+    }
+
+    .lg {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      color: var(--mut);
+      margin-top: 6px
+    }
+
+    .lg i {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 5px
+    }
+
+    .cb {
+      height: 340px;
+      overflow-y: auto;
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--bg)
+    }
+
+    .m {
+      max-width: 82%;
+      padding: 9px 14px;
+      border-radius: 14px;
+      background: var(--card);
+      border: 1px solid var(--bd);
+      white-space: pre-line
+    }
+
+    .m.u {
+      align-self: flex-end;
+      background: var(--acc);
+      color: var(--accfg);
+      border: 0
+    }
+
+    .cr {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px
+    }
+
+    .cr input {
+      flex: 1
+    }
+
+    .sg {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px
+    }
+
+    .sg button {
+      background: var(--acc2) !important;
+      color: var(--acc) !important;
+      padding: 6px 12px !important;
+      font-size: 13px
+    }
+
+    .hero {
+      background: var(--acc2);
+      border-radius: 14px;
+      padding: 32px 28px;
+      margin-bottom: 8px
+    }
+
+    .hero h2 {
+      display: block !important;
+      margin: 0 0 8px;
+      font-size: 28px;
+      color: var(--acc)
+    }
+
+    .hero p {
+      max-width: 640px;
+      font-size: 15.5px
+    }
+
+    .hero .go {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px
+    }
+
+    .hc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 8px
+    }
+
+    .hc>div {
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--bg)
+    }
+
+    .hc b {
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .hc span {
+      color: var(--mut);
+      font-size: 13.5px
+    }
+
+    .hl {
+      font-size: 22px;
+      font-weight: 650;
+      color: var(--hi)
+    }
+
+    main .hero h2 {
+      display: block
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="logo">F</div>
+        <div><b>FLOODCONNECT</b><span>Emergency Management</span></div>
+      </div>
+      <nav><button data-t="home">Home</button><button data-t="dash">Dashboard</button><button
+          data-t="rep">Reports</button><button data-t="queue">Priority Queue</button><button data-t="camps">Relief
+          Camps</button><button data-t="route">Rescue Routes</button><button data-t="alloc">Allocation</button><button
+          data-t="img">Flood Image</button><button data-t="chat">Assistant</button><button data-t="data">Data</button>
+      </nav>
+      <div id="um"></div>
+    </aside>
+    <div class="content">
+      <div class="bar">
+        <h1 id="pt">Dashboard</h1><span class="mut">Smart Emergency Management System</span>
+      </div>
+      <main id="main"></main>
+    </div>
+  </div>
+  <script>
+    const ST = ['Pending', 'In Progress', 'Rescued', 'Closed'], PR = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+    const SR = `101|Rahul|Rajpur Road|Trapped|HIGH|Water entered the house, family on first floor|9876543210|Pending
 102|Priya|Prem Nagar|Medical|MEDIUM|Elderly person needs medicines|9876501234|Pending
 103|Riya|Clement Town|Food and Water|LOW|Stranded without drinking water|9812345678|Pending
 104|Aman|Sahastradhara|Trapped|HIGH|Road washed away, stuck near river|9899001122|Pending`;
-const SC=`201|Safe Haven|Dehradun|100|45|200|30
+    const SC = `201|Safe Haven|Dehradun|100|45|200|30
 202|Hope Camp|Clement Town|80|60|150|20`;
-const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const lines=t=>t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>l.split('|').map(x=>x.trim()));
-const uniq=a=>a.filter((x,i)=>a.findIndex(y=>y.id===x.id)===i);
-function parseR(t){return uniq(lines(t).map(p=>{if(p.length!==8)return null;const id=+p[0],sev=p[4].toUpperCase();
- if(!/^\d{1,9}$/.test(p[0])||id<1||!PR[sev]||!ST.includes(p[7]))return null;return{id,name:p[1],loc:p[2],type:p[3],sev,desc:p[5],tel:p[6],st:p[7]}}).filter(Boolean))}
-function parseC(t){return uniq(lines(t).map(p=>{if(p.length!==7||!p.every((x,i)=>i===1||i===2||/^\d{1,9}$/.test(x)))return null;
- const[id,cap,beds,food,kits]=[0,3,4,5,6].map(i=>+p[i]);if(id<1||beds>cap)return null;return{id,name:p[1],loc:p[2],cap,beds,food,kits}}).filter(Boolean))}
-const outR=()=>S.r.map(r=>[r.id,r.name,r.loc,r.type,r.sev,r.desc,r.tel,r.st].join('|')).join('\n');
-const outC=()=>S.c.map(c=>[c.id,c.name,c.loc,c.cap,c.beds,c.food,c.kits].join('|')).join('\n');
-function load(){try{const j=localStorage.getItem('fc1');if(j)return JSON.parse(j)}catch(e){}return{r:parseR(SR),c:parseC(SC)}}
-function save(){try{localStorage.setItem('fc1',JSON.stringify(S))}catch(e){}}
-let S=load(),tab='home',msg='',add=false,q='';
-let chat=[{u:0,t:"Hello! I am FloodBot. Ask me about reports, the queue or relief camps."}];
-const HELP=['Who is next?','How many high priority cases?','Status of reports','How many beds are free?','Give me a summary','Flood safety tips'];
-const KB=[
-["trapped,stuck,drowning,rescue me,help me,in danger,water rising,rising water,water is coming,water entering,need rescue,save us,save me,dying,cannot get out",
-"If you are in immediate danger, call 112 (or 1070, the Uttarakhand State Disaster Control Room) right now and give your exact location. While you wait: move to the highest safe place (upper floor or roof), do not walk or swim through moving water, take your phone, torch, drinking water and medicines, and signal with a torch or a bright cloth. Then report your emergency in FloodConnect so the rescue team can see it."],
-["report,register,submit,complaint,raise emergency,add emergency,how do i ask for rescue,request rescue",
-"To report an emergency here, choose Report an Emergency (menu 1 in the program, the Reports tab in the web version) and enter your name, exact location, type of emergency, severity (HIGH if life is at risk), a short description and a 10-digit contact number. You get a report ID: keep it and ask me 'status of report <ID>' any time. For anything life-threatening also call 112."],
-["camp,camps,shelter,relief camp,where to go,safe place,place to stay,beds,bed free,accommodation",
-"@CAMPS"],
-["helpline,emergency number,phone number,contact number,control room,ambulance,police,fire brigade,112,1070,1077,108,toll free,who to call,whom to call,call",
-"Emergency numbers (India): 112 national emergency, 1070 Uttarakhand State Disaster Control Room, 1077 District Control Room, 108 ambulance, 100 police, 101 fire."],
-["evacuate,evacuation,leave home,leave house,should i leave,leave the area,order to leave",
-"If authorities order an evacuation, leave immediately. Take your ready bag, switch off electricity and gas, lock the house, tell family and neighbours where you are going, use the safest high-ground route and head to the nearest relief camp (ask me 'relief camps'). Do not return until it is declared safe."],
-["carry,bring,pack,emergency kit,go bag,ready bag,essentials,what to take,what should i take",
-"Take: drinking water, dry food, your medicines (a week's supply if you can), phone with power bank, torch, a change of clothes, a blanket, ID and important papers in a waterproof bag, some cash and baby supplies if needed. Carry only what you can hold; leave heavy items behind."],
-["prepare,preparation,before flood,get ready,be ready,plan ahead,precaution,precautions",
-"Prepare now: know the nearest relief camp and the safest route to higher ground, keep a ready bag (water, food, medicines, torch, power bank, documents in a waterproof cover), save the numbers 112, 1070, 1077 and 108, keep your phone charged, move valuables to an upper floor and agree on a meeting point with your family."],
-["during flood,what to do,what should i do,flood safety,safety,tips,advice,survive,stay safe,precautions during",
-"During a flood: move to higher ground early; never walk, swim or drive through flood water (about 15 cm of moving water can knock an adult off their feet); stay away from rivers, drains and fallen power lines; switch off electricity at the main switch only if you can reach it from dry ground; follow official alerts; and call 112 or 1070 if you are in danger."],
-["after flood,after the flood,return home,going back,go back home,clean up,cleanup,damage,flood is over,water has gone",
-"After a flood: return only when authorities say it is safe, wear boots and gloves, do not touch wet electrical items until an electrician checks them, throw away food that touched flood water, boil or treat drinking water, photograph the damage for claims, and watch out for snakes and weak walls or floors."],
-["electric,electricity,current,power line,shock,switch,wire,socket,short circuit,transformer",
-"Water and electricity are deadly together. Switch off the main power only if you can reach the switch while standing on dry ground. Never touch wet switches, wires or appliances, and stay far away from fallen power lines (report them to the electricity department or 112). Do not use wet appliances until an electrician has checked them."],
-["drive,driving,car,vehicle,bike,scooter,cross the road,cross the river,bridge,wade,walk through,causeway",
-"Do not drive or walk through flood water. It can hide damaged roads, open drains and strong currents, and a vehicle can stall or float in about 30 cm of water. Turn around and take another route. If your vehicle is caught in rising water, get out and move to higher ground, but only if the water around you is not fast moving."],
-["drink,drinking water,safe water,water safe,safe to drink,boil,purify,tap water,chlorine,contaminated,water is dirty,clean water",
-"Drink only safe water: boil it at a rolling boil for at least 1 minute, or use chlorine tablets as directed, or use sealed bottled water. Store it in clean, covered containers. Do not drink flood water, and avoid tap water until it is declared safe."],
-["food,eat,cook,cooking,fridge,leftover,leftovers,ration,hungry,hunger,packets",
-"Eat only sealed or freshly cooked food. Throw away food that touched flood water, food from a fridge that lost power for more than 4 hours, and swollen or damaged cans. Wash hands with soap and safe water before eating. In a relief camp, ask the camp staff for food packets."],
-["disease,diarrhoea,diarrhea,loose motion,cholera,typhoid,dengue,malaria,leptospirosis,infection,fever,hygiene,mosquito,vomiting,rash",
-"Floods spread infections such as diarrhoea, typhoid, cholera, leptospirosis, dengue and malaria. Wash hands with soap and safe water, drink boiled or treated water, keep wounds clean and covered, avoid wading in dirty water, and use mosquito nets or repellent. See a doctor or the camp medical post for fever, vomiting, loose motions or a red, swollen wound. In an emergency call 108."],
-["first aid,bleeding,injury,injured,hurt,burn,fracture,broken bone,faint,unconscious,cpr,not breathing,hypothermia,shivering,wound,cut",
-"Basic first aid: for bleeding, press firmly on the wound with a clean cloth; for burns, cool with clean running water for 10 to 20 minutes; keep a suspected broken bone still; if someone is unconscious and not breathing, call 108 and start chest compressions if you know how. I am not a doctor, so for any serious injury call 108 immediately."],
-["snake,snakes,bite,bitten,sting,scorpion",
-"For a snake bite: keep the person calm and still, keep the bitten limb at or below heart level, remove rings and tight items, and get to a hospital or call 108 quickly. Do not cut the wound, suck the venom, apply ice or tie a tight tourniquet. Floods push snakes into homes, so shake out shoes and clothes before using them."],
-["child,children,kid,kids,baby,infant,elderly,old people,old age,grandparents,disabled,disability,wheelchair,pregnant,pregnancy",
-"Children, elderly people, pregnant women and people with disabilities should be moved to safety first. Keep them warm and dry, carry their medicines and special items, and write their needs in your report description so the rescue team and camp staff can plan for them."],
-["pet,pets,dog,cat,cow,cattle,buffalo,animal,animals,livestock,goat",
-"Take pets with you if you can, with a leash or carrier, food and water. Many relief camps cannot take animals, so ask the District Control Room (1077) about animal shelters. Move cattle to higher ground early, and do not risk your life to save animals."],
-["medicine,medicines,medication,insulin,prescription,diabetes,diabetic,blood pressure,tablet,tablets,dialysis,oxygen",
-"Keep your regular medicines (and a copy of the prescription) in a waterproof bag, ideally a week's supply. Tell the camp medical staff about any condition or allergy. Medicines that need to stay cool, like insulin, should go in a cool bag; ask the camp medical post for help. For urgent medical help call 108."],
-["document,documents,aadhaar,certificate,valuables,important papers,insurance,compensation,claim,relief money,ex gratia",
-"Keep Aadhaar, ID, property papers, insurance and bank documents in a sealed waterproof bag, and keep photos or scans on your phone. For relief or compensation after a flood, contact the District Control Room (1077) or your tehsil office, and keep photos of the damage."],
-["landslide,mudslide,hill,hills,cloudburst,slope,debris,boulder,rockfall",
-"Hill areas can see landslides and cloudbursts with heavy rain. Move away from slopes, river banks and drains. Leave if you hear rumbling or see mud flowing or tilting trees and poles, and move sideways away from the path, not downhill. Do not cross roads covered by debris. Call 112 or 1070."],
-["phone,mobile,battery,charge,charging,network,signal,power bank,sms,whatsapp,torch",
-"To save phone battery: lower the brightness, turn on battery saver, close apps, use SMS instead of calls when the network is weak, and keep a power bank. Share your location with family and keep emergency numbers saved."],
-["forecast,weather,warning,alert,alerts,imd,rain,rainfall,red alert,orange alert,yellow alert,will it flood,dam,river level",
-"I cannot see live weather or river levels. Follow official alerts from the India Meteorological Department (IMD), the Uttarakhand State Disaster Management Authority and your district administration. If an evacuation is ordered, leave immediately."],
-["when will,how long,eta,how soon,wait,waiting,arrive,rescue team,taking so long,no one came,nobody came",
-"I cannot promise an arrival time. Reports are handled by priority: HIGH (life at risk) first, then MEDIUM, then LOW, and by arrival order within the same level. Keep your exact location and a working phone number ready, stay somewhere high and safe, and call 112 if things get worse. Ask me 'status of report <ID>' to check your place in the queue."],
-["priority,how does it work,how are cases,queue,prioritize,prioritise,how do you decide",
-"FloodConnect ranks every pending report: HIGH severity (life at risk) first, then MEDIUM, then LOW; reports of the same severity are handled in the order they arrived. The rescue team then finds the shortest open road to the location and matches the person to the nearest camp that has what they need."],
-["volunteer,donate,donation,help others,want to help,contribute,relief work,ngo",
-"Thank you for wanting to help. Please do not enter flood water yourself. Contact the District Control Room (1077) or your local relief committee to register as a volunteer, donate supplies or join organised relief work."],
-["missing,lost,missing person,find my family,relative,cannot find,separated,family member",
-"If someone is missing, call 112 or the police (100) and the District Control Room (1077) with the person's name, age, clothing and last known location. Register with the relief camp staff too, as camps keep lists of the people who arrive."],
-["who are you,what are you,your name,are you real,are you human,are you ai,are you a bot",
-"I am FloodBot, FloodConnect's assistant. I answer from a built-in knowledge base of flood safety advice and from live report and relief-camp data. I am not a person or a doctor, so call 112 in an emergency."],
-["what can you,can you help,how can you,help$,menu,options,topics,commands",
-"You can ask me about: how to report an emergency, relief camps and free beds, helpline numbers, what to do before, during and after a flood, evacuation, what to pack, electricity, driving, safe drinking water, food, health and first aid, snake bites, landslides, pets, children and the elderly, medicines, documents, missing people, or 'status of report <ID>'."],
-["thank,thanks,thx,thank you,appreciate,great,helpful",
-"You are welcome. Stay safe, and call 112 if you are ever in danger."],
-["hi$,hii$,hello,hey$,namaste,good morning,good evening,good afternoon,good night",
-"Hello! I am FloodBot. Ask me about flood safety, relief camps, how to report an emergency, helpline numbers, drinking water, first aid, or the status of your report."],
-["bye,goodbye,see you,take care",
-"Stay safe. Goodbye!"]
-],FALL="I am not sure about that one. I can help with: reporting an emergency, relief camps and beds, helpline numbers, flood safety before, during and after a flood, evacuation, electricity, driving, drinking water, food, health, first aid, snake bites, landslides, pets, children and the elderly, medicines, documents, missing people, and the status of your report. If you are in danger, call 112 now.";
-const STAFFHI="Hello! I am FloodBot. Ask me about reports, the queue or relief camps.",CHI="Hello! I am FloodBot. Ask me about flood safety, relief camps, how to report an emergency, helpline numbers, first aid or the status of your report.",CHELP=['Relief camps','How do I report an emergency?','Helpline numbers','Make water safe to drink','Status of report 101'];
-const botHi=()=>U&&U.role==='citizen'?CHI:STAFFHI;
-/* Knowledge base: each entry = comma separated keywords + answer. Keyword ending in $ = whole word. Score = words matched; earlier entries win ties. */
-const norm=t=>' '+t.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()+' ';
-function guide(x){const q=norm(x);let best=0,ans='';for(const[k,a]of KB){let s=0;for(let w of k.split(',')){const e=w.endsWith('$');if(e)w=w.slice(0,-1);if(q.includes(' '+w+(e?' ':'')))s+=w.split(' ').length}if(s>best){best=s;ans=a}}return ans}
-function guideReply(x){const g=guide(x);return g==='@CAMPS'?(S.c.length?'Relief camps:\n'+S.c.map(c=>`- ${c.name} (${c.loc}): ${c.beds} of ${c.cap} beds free, ${c.food} food packets, ${c.kits} medical kits`).join('\n')+'\nAsk your rescue team or call 1077 if you need help reaching a camp.':'No relief camps are registered yet. Call 1077 (District Control Room) for the nearest shelter.'):g}
-/* Citizens get safety help and the status of their own report (status, severity, queue place only), never names, contacts or the staff queue. */
-function citizenReply(x){const t=x.toLowerCase(),m=t.match(/\d{1,6}/);
- if(m&&/report|status|case|\bid\b|request|#/.test(t)){const id=+m[0],r=H.get(id);
-  if(r){let s=`Report #${id} (${r.sev}) is ${r.st}.`;if(r.st==='Pending'){const n=queue(),i=n.findIndex(a=>a.id===id);if(i>=0)s+=` It is number ${i+1} of ${n.length} in the priority queue.`;s+=' A rescue team will be assigned in priority order.'}else if(r.st==='In Progress')s+=' A rescue team has been assigned.';else if(r.st==='Rescued')s+=' It is marked as rescued. If you still need help, report again or call 112.';return s}
-  if(![100,101,108,112,1070,1077].includes(id))return`I could not find a report with ID ${id}. Please check the number, or report your emergency from the Reports tab.`}
- return guideReply(x)||FALL}
+    const $ = s => document.querySelector(s);
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const lines = t => t.split('\n').map(l => l.trim()).filter(Boolean).map(l => l.split('|').map(x => x.trim()));
+    const uniq = a => a.filter((x, i) => a.findIndex(y => y.id === x.id) === i);
+    function parseR(t) {
+      return uniq(lines(t).map(p => {
+        if (p.length !== 8) return null; const id = +p[0], sev = p[4].toUpperCase();
+        if (!/^\d{1,9}$/.test(p[0]) || id < 1 || !PR[sev] || !ST.includes(p[7])) return null; return { id, name: p[1], loc: p[2], type: p[3], sev, desc: p[5], tel: p[6], st: p[7] }
+      }).filter(Boolean))
+    }
+    function parseC(t) {
+      return uniq(lines(t).map(p => {
+        if (p.length !== 7 || !p.every((x, i) => i === 1 || i === 2 || /^\d{1,9}$/.test(x))) return null;
+        const [id, cap, beds, food, kits] = [0, 3, 4, 5, 6].map(i => +p[i]); if (id < 1 || beds > cap) return null; return { id, name: p[1], loc: p[2], cap, beds, food, kits }
+      }).filter(Boolean))
+    }
+    const outR = () => S.r.map(r => [r.id, r.name, r.loc, r.type, r.sev, r.desc, r.tel, r.st].join('|')).join('\n');
+    const outC = () => S.c.map(c => [c.id, c.name, c.loc, c.cap, c.beds, c.food, c.kits].join('|')).join('\n');
+    function load() { try { const j = localStorage.getItem('fc1'); if (j) return JSON.parse(j) } catch (e) { } return { r: parseR(SR), c: parseC(SC) } }
+    function save() { try { localStorage.setItem('fc1', JSON.stringify(S)) } catch (e) { } }
+    let S = load(), tab = 'home', msg = '', add = false, q = '';
+    let chat = [{ u: 0, t: "Hello! I am FloodBot. Ask me about reports, the queue or relief camps." }];
+    const HELP = ['Who is next?', 'How many high priority cases?', 'Status of reports', 'How many beds are free?', 'Give me a summary', 'Flood safety tips'];
+    const KB = [
+      ["trapped,stuck,drowning,rescue me,help me,in danger,water rising,rising water,water is coming,water entering,need rescue,save us,save me,dying,cannot get out",
+        "If you are in immediate danger, call 112 (or 1070, the Uttarakhand State Disaster Control Room) right now and give your exact location. While you wait: move to the highest safe place (upper floor or roof), do not walk or swim through moving water, take your phone, torch, drinking water and medicines, and signal with a torch or a bright cloth. Then report your emergency in FloodConnect so the rescue team can see it."],
+      ["report,register,submit,complaint,raise emergency,add emergency,how do i ask for rescue,request rescue",
+        "To report an emergency here, choose Report an Emergency (menu 1 in the program, the Reports tab in the web version) and enter your name, exact location, type of emergency, severity (HIGH if life is at risk), a short description and a 10-digit contact number. You get a report ID: keep it and ask me 'status of report <ID>' any time. For anything life-threatening also call 112."],
+      ["camp,camps,shelter,relief camp,where to go,safe place,place to stay,beds,bed free,accommodation",
+        "@CAMPS"],
+      ["helpline,emergency number,phone number,contact number,control room,ambulance,police,fire brigade,112,1070,1077,108,toll free,who to call,whom to call,call",
+        "Emergency numbers (India): 112 national emergency, 1070 Uttarakhand State Disaster Control Room, 1077 District Control Room, 108 ambulance, 100 police, 101 fire."],
+      ["evacuate,evacuation,leave home,leave house,should i leave,leave the area,order to leave",
+        "If authorities order an evacuation, leave immediately. Take your ready bag, switch off electricity and gas, lock the house, tell family and neighbours where you are going, use the safest high-ground route and head to the nearest relief camp (ask me 'relief camps'). Do not return until it is declared safe."],
+      ["carry,bring,pack,emergency kit,go bag,ready bag,essentials,what to take,what should i take",
+        "Take: drinking water, dry food, your medicines (a week's supply if you can), phone with power bank, torch, a change of clothes, a blanket, ID and important papers in a waterproof bag, some cash and baby supplies if needed. Carry only what you can hold; leave heavy items behind."],
+      ["prepare,preparation,before flood,get ready,be ready,plan ahead,precaution,precautions",
+        "Prepare now: know the nearest relief camp and the safest route to higher ground, keep a ready bag (water, food, medicines, torch, power bank, documents in a waterproof cover), save the numbers 112, 1070, 1077 and 108, keep your phone charged, move valuables to an upper floor and agree on a meeting point with your family."],
+      ["during flood,what to do,what should i do,flood safety,safety,tips,advice,survive,stay safe,precautions during",
+        "During a flood: move to higher ground early; never walk, swim or drive through flood water (about 15 cm of moving water can knock an adult off their feet); stay away from rivers, drains and fallen power lines; switch off electricity at the main switch only if you can reach it from dry ground; follow official alerts; and call 112 or 1070 if you are in danger."],
+      ["after flood,after the flood,return home,going back,go back home,clean up,cleanup,damage,flood is over,water has gone",
+        "After a flood: return only when authorities say it is safe, wear boots and gloves, do not touch wet electrical items until an electrician checks them, throw away food that touched flood water, boil or treat drinking water, photograph the damage for claims, and watch out for snakes and weak walls or floors."],
+      ["electric,electricity,current,power line,shock,switch,wire,socket,short circuit,transformer",
+        "Water and electricity are deadly together. Switch off the main power only if you can reach the switch while standing on dry ground. Never touch wet switches, wires or appliances, and stay far away from fallen power lines (report them to the electricity department or 112). Do not use wet appliances until an electrician has checked them."],
+      ["drive,driving,car,vehicle,bike,scooter,cross the road,cross the river,bridge,wade,walk through,causeway",
+        "Do not drive or walk through flood water. It can hide damaged roads, open drains and strong currents, and a vehicle can stall or float in about 30 cm of water. Turn around and take another route. If your vehicle is caught in rising water, get out and move to higher ground, but only if the water around you is not fast moving."],
+      ["drink,drinking water,safe water,water safe,safe to drink,boil,purify,tap water,chlorine,contaminated,water is dirty,clean water",
+        "Drink only safe water: boil it at a rolling boil for at least 1 minute, or use chlorine tablets as directed, or use sealed bottled water. Store it in clean, covered containers. Do not drink flood water, and avoid tap water until it is declared safe."],
+      ["food,eat,cook,cooking,fridge,leftover,leftovers,ration,hungry,hunger,packets",
+        "Eat only sealed or freshly cooked food. Throw away food that touched flood water, food from a fridge that lost power for more than 4 hours, and swollen or damaged cans. Wash hands with soap and safe water before eating. In a relief camp, ask the camp staff for food packets."],
+      ["disease,diarrhoea,diarrhea,loose motion,cholera,typhoid,dengue,malaria,leptospirosis,infection,fever,hygiene,mosquito,vomiting,rash",
+        "Floods spread infections such as diarrhoea, typhoid, cholera, leptospirosis, dengue and malaria. Wash hands with soap and safe water, drink boiled or treated water, keep wounds clean and covered, avoid wading in dirty water, and use mosquito nets or repellent. See a doctor or the camp medical post for fever, vomiting, loose motions or a red, swollen wound. In an emergency call 108."],
+      ["first aid,bleeding,injury,injured,hurt,burn,fracture,broken bone,faint,unconscious,cpr,not breathing,hypothermia,shivering,wound,cut",
+        "Basic first aid: for bleeding, press firmly on the wound with a clean cloth; for burns, cool with clean running water for 10 to 20 minutes; keep a suspected broken bone still; if someone is unconscious and not breathing, call 108 and start chest compressions if you know how. I am not a doctor, so for any serious injury call 108 immediately."],
+      ["snake,snakes,bite,bitten,sting,scorpion",
+        "For a snake bite: keep the person calm and still, keep the bitten limb at or below heart level, remove rings and tight items, and get to a hospital or call 108 quickly. Do not cut the wound, suck the venom, apply ice or tie a tight tourniquet. Floods push snakes into homes, so shake out shoes and clothes before using them."],
+      ["child,children,kid,kids,baby,infant,elderly,old people,old age,grandparents,disabled,disability,wheelchair,pregnant,pregnancy",
+        "Children, elderly people, pregnant women and people with disabilities should be moved to safety first. Keep them warm and dry, carry their medicines and special items, and write their needs in your report description so the rescue team and camp staff can plan for them."],
+      ["pet,pets,dog,cat,cow,cattle,buffalo,animal,animals,livestock,goat",
+        "Take pets with you if you can, with a leash or carrier, food and water. Many relief camps cannot take animals, so ask the District Control Room (1077) about animal shelters. Move cattle to higher ground early, and do not risk your life to save animals."],
+      ["medicine,medicines,medication,insulin,prescription,diabetes,diabetic,blood pressure,tablet,tablets,dialysis,oxygen",
+        "Keep your regular medicines (and a copy of the prescription) in a waterproof bag, ideally a week's supply. Tell the camp medical staff about any condition or allergy. Medicines that need to stay cool, like insulin, should go in a cool bag; ask the camp medical post for help. For urgent medical help call 108."],
+      ["document,documents,aadhaar,certificate,valuables,important papers,insurance,compensation,claim,relief money,ex gratia",
+        "Keep Aadhaar, ID, property papers, insurance and bank documents in a sealed waterproof bag, and keep photos or scans on your phone. For relief or compensation after a flood, contact the District Control Room (1077) or your tehsil office, and keep photos of the damage."],
+      ["landslide,mudslide,hill,hills,cloudburst,slope,debris,boulder,rockfall",
+        "Hill areas can see landslides and cloudbursts with heavy rain. Move away from slopes, river banks and drains. Leave if you hear rumbling or see mud flowing or tilting trees and poles, and move sideways away from the path, not downhill. Do not cross roads covered by debris. Call 112 or 1070."],
+      ["phone,mobile,battery,charge,charging,network,signal,power bank,sms,whatsapp,torch",
+        "To save phone battery: lower the brightness, turn on battery saver, close apps, use SMS instead of calls when the network is weak, and keep a power bank. Share your location with family and keep emergency numbers saved."],
+      ["forecast,weather,warning,alert,alerts,imd,rain,rainfall,red alert,orange alert,yellow alert,will it flood,dam,river level",
+        "I cannot see live weather or river levels. Follow official alerts from the India Meteorological Department (IMD), the Uttarakhand State Disaster Management Authority and your district administration. If an evacuation is ordered, leave immediately."],
+      ["when will,how long,eta,how soon,wait,waiting,arrive,rescue team,taking so long,no one came,nobody came",
+        "I cannot promise an arrival time. Reports are handled by priority: HIGH (life at risk) first, then MEDIUM, then LOW, and by arrival order within the same level. Keep your exact location and a working phone number ready, stay somewhere high and safe, and call 112 if things get worse. Ask me 'status of report <ID>' to check your place in the queue."],
+      ["priority,how does it work,how are cases,queue,prioritize,prioritise,how do you decide",
+        "FloodConnect ranks every pending report: HIGH severity (life at risk) first, then MEDIUM, then LOW; reports of the same severity are handled in the order they arrived. The rescue team then finds the shortest open road to the location and matches the person to the nearest camp that has what they need."],
+      ["volunteer,donate,donation,help others,want to help,contribute,relief work,ngo",
+        "Thank you for wanting to help. Please do not enter flood water yourself. Contact the District Control Room (1077) or your local relief committee to register as a volunteer, donate supplies or join organised relief work."],
+      ["missing,lost,missing person,find my family,relative,cannot find,separated,family member",
+        "If someone is missing, call 112 or the police (100) and the District Control Room (1077) with the person's name, age, clothing and last known location. Register with the relief camp staff too, as camps keep lists of the people who arrive."],
+      ["who are you,what are you,your name,are you real,are you human,are you ai,are you a bot",
+        "I am FloodBot, FloodConnect's assistant. I answer from a built-in knowledge base of flood safety advice and from live report and relief-camp data. I am not a person or a doctor, so call 112 in an emergency."],
+      ["what can you,can you help,how can you,help$,menu,options,topics,commands",
+        "You can ask me about: how to report an emergency, relief camps and free beds, helpline numbers, what to do before, during and after a flood, evacuation, what to pack, electricity, driving, safe drinking water, food, health and first aid, snake bites, landslides, pets, children and the elderly, medicines, documents, missing people, or 'status of report <ID>'."],
+      ["thank,thanks,thx,thank you,appreciate,great,helpful",
+        "You are welcome. Stay safe, and call 112 if you are ever in danger."],
+      ["hi$,hii$,hello,hey$,namaste,good morning,good evening,good afternoon,good night",
+        "Hello! I am FloodBot. Ask me about flood safety, relief camps, how to report an emergency, helpline numbers, drinking water, first aid, or the status of your report."],
+      ["bye,goodbye,see you,take care",
+        "Stay safe. Goodbye!"]
+    ], FALL = "I am not sure about that one. I can help with: reporting an emergency, relief camps and beds, helpline numbers, flood safety before, during and after a flood, evacuation, electricity, driving, drinking water, food, health, first aid, snake bites, landslides, pets, children and the elderly, medicines, documents, missing people, and the status of your report. If you are in danger, call 112 now.";
+    const STAFFHI = "Hello! I am FloodBot. Ask me about reports, the queue or relief camps.", CHI = "Hello! I am FloodBot. Ask me about flood safety, relief camps, how to report an emergency, helpline numbers, first aid or the status of your report.", CHELP = ['Relief camps', 'How do I report an emergency?', 'Helpline numbers', 'Make water safe to drink', 'Status of report 101'];
+    const botHi = () => U && U.role === 'citizen' ? CHI : STAFFHI;
+    /* Knowledge base: each entry = comma separated keywords + answer. Keyword ending in $ = whole word. Score = words matched; earlier entries win ties. */
+    const norm = t => ' ' + t.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+    function guide(x) { const q = norm(x); let best = 0, ans = ''; for (const [k, a] of KB) { let s = 0; for (let w of k.split(',')) { const e = w.endsWith('$'); if (e) w = w.slice(0, -1); if (q.includes(' ' + w + (e ? ' ' : ''))) s += w.split(' ').length } if (s > best) { best = s; ans = a } } return ans }
+    function guideReply(x) { const g = guide(x); return g === '@CAMPS' ? (S.c.length ? 'Relief camps:\n' + S.c.map(c => `- ${c.name} (${c.loc}): ${c.beds} of ${c.cap} beds free, ${c.food} food packets, ${c.kits} medical kits`).join('\n') + '\nAsk your rescue team or call 1077 if you need help reaching a camp.' : 'No relief camps are registered yet. Call 1077 (District Control Room) for the nearest shelter.') : g }
+    /* Citizens get safety help and the status of their own report (status, severity, queue place only), never names, contacts or the staff queue. */
+    function citizenReply(x) {
+      const t = x.toLowerCase(), m = t.match(/\d{1,6}/);
+      if (m && /report|status|case|\bid\b|request|#/.test(t)) {
+        const id = +m[0], r = H.get(id);
+        if (r) { let s = `Report #${id} (${r.sev}) is ${r.st}.`; if (r.st === 'Pending') { const n = queue(), i = n.findIndex(a => a.id === id); if (i >= 0) s += ` It is number ${i + 1} of ${n.length} in the priority queue.`; s += ' A rescue team will be assigned in priority order.' } else if (r.st === 'In Progress') s += ' A rescue team has been assigned.'; else if (r.st === 'Rescued') s += ' It is marked as rescued. If you still need help, report again or call 112.'; return s }
+        if (![100, 101, 108, 112, 1070, 1077].includes(id)) return `I could not find a report with ID ${id}. Please check the number, or report your emergency from the Reports tab.`
+      }
+      return guideReply(x) || FALL
+    }
 
-function botReply(x){if(U&&U.role==='citizen')return citizenReply(x);const t=x.toLowerCase(),n=queue(),h=(...w)=>w.some(k=>t.includes(k));
- if(h('help','what can you'))return'Try: '+HELP.join(' / ');
- if(h('next','first','urgent','who')){const r=n[0];return r?`Next to be rescued: #${r.id} ${r.name} at ${r.loc} (${r.type}, ${r.sev}). ${n.length} waiting in the queue.`:'The priority queue is empty.'}
- if(h('high','critical','severe'))return`${cnt(r=>r.sev==='HIGH')} HIGH priority report(s) in total, ${cnt(r=>r.sev==='HIGH'&&active(r))} still active.`;
- if(h('bed','camp','shelter'))return`${S.c.length} relief camp(s), ${S.c.reduce((a,c)=>a+c.beds,0)} bed(s) available. `+S.c.map(c=>`${c.name}: ${c.beds}/${c.cap} beds`).join('; ');
- if(h('status','pending','progress','rescued','closed'))return ST.map(k=>`${k}: ${cnt(r=>r.st===k)}`).join(', ');
- if(h('queue','waiting'))return`${n.length} emergencies waiting in the priority queue.`;
- if(h('summary','total','how many','overview'))return`Total reports: ${S.r.length} | Active: ${cnt(active)} | In queue: ${n.length} | Camps: ${S.c.length}`;
- if(h('safe','tip','advice','flood'))return'Move to higher ground, avoid flood water, switch off the main electricity, keep water and medicines ready, call 112 or 1070.';
- if(h('hello','hi','hey'))return'Hello! Type "help" to see what I can answer.';
- return guideReply(x)||'Sorry, I did not understand. Type "help" to see what I can answer.'}
-const COL={HIGH:'var(--hi)',MEDIUM:'#d97706',LOW:'var(--acc)'};
-function donut(){const T=S.r.length,R=60,C=2*Math.PI*R;let o=0;const seg=['HIGH','MEDIUM','LOW'].map(k=>{const n=cnt(r=>r.sev===k),l=T?n/T*C:0,e=`<circle r="${R}" cx="80" cy="80" fill="none" stroke="${COL[k]}" stroke-width="24" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-o}" transform="rotate(-90 80 80)"/>`;o+=l;return e}).join('');
- return`<div><h3>Severity Split</h3><svg viewBox="0 0 160 160" width="190">${seg}<text x="80" y="86" text-anchor="middle" font-size="26" font-weight="600" fill="currentColor">${T}</text></svg><div class="lg">${['HIGH','MEDIUM','LOW'].map(k=>`<span><i style="background:${COL[k]}"></i>${k} ${cnt(r=>r.sev===k)}</span>`).join('')}</div></div>`}
-function bars(t,data,max){const w=300,h=150,bw=w/data.length;return`<div><h3>${t}</h3><svg viewBox="0 0 ${w} ${h+34}">${data.map((d,i)=>{const bh=max?d[1]/max*h:0;return`<rect x="${i*bw+bw*.2}" y="${h-bh}" width="${bw*.6}" height="${bh}" rx="5" fill="var(--acc)"/><text x="${i*bw+bw/2}" y="${h-bh-5}" text-anchor="middle" font-size="12" fill="currentColor">${d[1]}</text><text x="${i*bw+bw/2}" y="${h+18}" text-anchor="middle" font-size="10.5" fill="var(--mut)">${esc(d[0])}</text>`}).join('')}</svg></div>`}
-const charts=()=>{const st=ST.map(k=>[k,cnt(r=>r.st===k)]),ca=S.c.map(c=>[c.name,c.beds]);
- return`<div class="ch">${donut()}${bars('Reports by Status',st,Math.max(1,...st.map(a=>a[1])))}${bars('Free Beds per Camp',ca,Math.max(1,...ca.map(a=>a[1])))}</div>`};
-const active=r=>r.st==='Pending'||r.st==='In Progress';
-/* Priority queue = sorted singly linked list. A new node goes after every node of equal or higher priority, so equal severity stays first-come-first-served. */
-const queue=()=>{let head=null;for(const r of S.r)if(r.st==='Pending'){const n={r,next:null};if(!head||PR[r.sev]<PR[head.r.sev]){n.next=head;head=n}else{let c=head;while(c.next&&PR[c.next.r.sev]<=PR[r.sev])c=c.next;n.next=c.next;c.next=n}}const o=[];for(let c=head;c;c=c.next)o.push(c.r);return o};
-const canon=s=>Object.keys(GN).find(n=>n.toLowerCase()===s.toLowerCase())||s;
-const nextId=a=>a.reduce((m,x)=>Math.max(m,x.id),0)+1;
-const cnt=(f)=>S.r.filter(f).length;
+    function botReply(x) {
+      if (U && U.role === 'citizen') return citizenReply(x); const t = x.toLowerCase(), n = queue(), h = (...w) => w.some(k => t.includes(k));
+      if (h('help', 'what can you')) return 'Try: ' + HELP.join(' / ');
+      if (h('next', 'first', 'urgent', 'who')) { const r = n[0]; return r ? `Next to be rescued: #${r.id} ${r.name} at ${r.loc} (${r.type}, ${r.sev}). ${n.length} waiting in the queue.` : 'The priority queue is empty.' }
+      if (h('high', 'critical', 'severe')) return `${cnt(r => r.sev === 'HIGH')} HIGH priority report(s) in total, ${cnt(r => r.sev === 'HIGH' && active(r))} still active.`;
+      if (h('bed', 'camp', 'shelter')) return `${S.c.length} relief camp(s), ${S.c.reduce((a, c) => a + c.beds, 0)} bed(s) available. ` + S.c.map(c => `${c.name}: ${c.beds}/${c.cap} beds`).join('; ');
+      if (h('status', 'pending', 'progress', 'rescued', 'closed')) return ST.map(k => `${k}: ${cnt(r => r.st === k)}`).join(', ');
+      if (h('queue', 'waiting')) return `${n.length} emergencies waiting in the priority queue.`;
+      if (h('summary', 'total', 'how many', 'overview')) return `Total reports: ${S.r.length} | Active: ${cnt(active)} | In queue: ${n.length} | Camps: ${S.c.length}`;
+      if (h('safe', 'tip', 'advice', 'flood')) return 'Move to higher ground, avoid flood water, switch off the main electricity, keep water and medicines ready, call 112 or 1070.';
+      if (h('hello', 'hi', 'hey')) return 'Hello! Type "help" to see what I can answer.';
+      return guideReply(x) || 'Sorry, I did not understand. Type "help" to see what I can answer.'
+    }
+    const COL = { HIGH: 'var(--hi)', MEDIUM: '#d97706', LOW: 'var(--acc)' };
+    function donut() {
+      const T = S.r.length, R = 60, C = 2 * Math.PI * R; let o = 0; const seg = ['HIGH', 'MEDIUM', 'LOW'].map(k => { const n = cnt(r => r.sev === k), l = T ? n / T * C : 0, e = `<circle r="${R}" cx="80" cy="80" fill="none" stroke="${COL[k]}" stroke-width="24" stroke-dasharray="${l} ${C - l}" stroke-dashoffset="${-o}" transform="rotate(-90 80 80)"/>`; o += l; return e }).join('');
+      return `<div><h3>Severity Split</h3><svg viewBox="0 0 160 160" width="190">${seg}<text x="80" y="86" text-anchor="middle" font-size="26" font-weight="600" fill="currentColor">${T}</text></svg><div class="lg">${['HIGH', 'MEDIUM', 'LOW'].map(k => `<span><i style="background:${COL[k]}"></i>${k} ${cnt(r => r.sev === k)}</span>`).join('')}</div></div>`
+    }
+    function bars(t, data, max) { const w = 300, h = 150, bw = w / data.length; return `<div><h3>${t}</h3><svg viewBox="0 0 ${w} ${h + 34}">${data.map((d, i) => { const bh = max ? d[1] / max * h : 0; return `<rect x="${i * bw + bw * .2}" y="${h - bh}" width="${bw * .6}" height="${bh}" rx="5" fill="var(--acc)"/><text x="${i * bw + bw / 2}" y="${h - bh - 5}" text-anchor="middle" font-size="12" fill="currentColor">${d[1]}</text><text x="${i * bw + bw / 2}" y="${h + 18}" text-anchor="middle" font-size="10.5" fill="var(--mut)">${esc(d[0])}</text>` }).join('')}</svg></div>` }
+    const charts = () => {
+      const st = ST.map(k => [k, cnt(r => r.st === k)]), ca = S.c.map(c => [c.name, c.beds]);
+      return `<div class="ch">${donut()}${bars('Reports by Status', st, Math.max(1, ...st.map(a => a[1])))}${bars('Free Beds per Camp', ca, Math.max(1, ...ca.map(a => a[1])))}</div>`
+    };
+    const active = r => r.st === 'Pending' || r.st === 'In Progress';
+    /* Priority queue = sorted singly linked list. A new node goes after every node of equal or higher priority, so equal severity stays first-come-first-served. */
+    const queue = () => { let head = null; for (const r of S.r) if (r.st === 'Pending') { const n = { r, next: null }; if (!head || PR[r.sev] < PR[head.r.sev]) { n.next = head; head = n } else { let c = head; while (c.next && PR[c.next.r.sev] <= PR[r.sev]) c = c.next; n.next = c.next; c.next = n } } const o = []; for (let c = head; c; c = c.next)o.push(c.r); return o };
+    const canon = s => Object.keys(GN).find(n => n.toLowerCase() === s.toLowerCase()) || s;
+    const nextId = a => a.reduce((m, x) => Math.max(m, x.id), 0) + 1;
+    const cnt = (f) => S.r.filter(f).length;
 
-const sv=s=>`<span class="tag ${s}">${s}</span>`;
-const msgd=()=>`<div id="msg" class="${msg[0]==='!'?'err':'ok'}">${esc(msg.slice(1))}</div>`;
-const row=(l,n)=>`<tr><td>${l}</td><td>${n}</td></tr>`;
-let H=new Map(),base='Dehradun';const UN=[];
-const idx=()=>{H=new Map(S.r.map(r=>[r.id,r]))};/* hash table: report id -> report, O(1) lookup */
-const snap=()=>{UN.push(JSON.stringify({r:S.r,c:S.c}));if(UN.length>20)UN.shift()};/* stack push (LIFO) */
-/* ---- Graph: locations = nodes, roads = weighted edges (km). Sample data - edit to match your map ---- */
-const GN={'Dehradun':[250,150],'Rajpur Road':[390,60],'Sahastradhara':[510,140],'Prem Nagar':[120,70],'Clement Town':[110,235],'Rispana':[330,235]};
-const GE=[['Dehradun','Rajpur Road',5],['Dehradun','Prem Nagar',8],['Dehradun','Clement Town',9],['Dehradun','Rispana',4],['Rajpur Road','Sahastradhara',6],['Prem Nagar','Clement Town',7],['Rispana','Clement Town',5],['Rajpur Road','Prem Nagar',10]];
-function adj(){const g={};Object.keys(GN).forEach(n=>g[n]=[]);GE.forEach(([a,b,w],i)=>{if(!S.blk.includes(i)){g[a].push([b,w]);g[b].push([a,w])}});return g}
-function dijk(src){const g=adj(),d={},p={},done={};Object.keys(g).forEach(n=>d[n]=Infinity);d[src]=0;
- for(;;){let u=null;for(const n in d)if(!done[n]&&d[n]<Infinity&&(u===null||d[n]<d[u]))u=n;if(u===null)break;done[u]=1;
-  for(const[v,w]of g[u])if(d[u]+w<d[v]){d[v]=d[u]+w;p[v]=u}}return{d,p}}
-const path=(p,t)=>{const a=[t];while(p[a[0]])a.unshift(p[a[0]]);return a};
-function RT(){S.blk=S.blk||[];const nx=queue()[0],{d,p}=dijk(base),hp=new Set();
- let o=`<h2>Rescue Routes</h2><p class="mut">Locations are graph nodes and roads are weighted edges (km). Dijkstra's algorithm finds the shortest route and skips blocked roads.</p>Rescue base: <select data-a="base">${Object.keys(GN).map(n=>`<option${n===base?' selected':''}>${n}</option>`).join('')}</select><h3>Route to next emergency</h3>`;
- if(!nx)o+='<p class="mut">The priority queue is empty.</p>';
- else{o+=`<p>#${nx.id} ${esc(nx.name)} at ${esc(nx.loc)} (${nx.sev})</p>`;
-  if(!(nx.loc in GN))o+=`<p class="err">${esc(nx.loc)} is not on the road graph.</p>`;
-  else if(d[nx.loc]===Infinity)o+='<p class="err">No safe route: every road to this location is blocked.</p>';
-  else{const a=path(p,nx.loc);a.forEach((n,i)=>{if(i){hp.add(a[i-1]+'|'+n);hp.add(n+'|'+a[i-1])}});o+=`<p class="ok">${a.join(' → ')} (${d[nx.loc]} km)</p>`;
-   const r2=dijk(nx.loc),cs=S.c.filter(c=>c.beds>0&&c.loc in GN&&r2.d[c.loc]<Infinity).sort((x,y)=>r2.d[x.loc]-r2.d[y.loc])[0];
-   o+=cs?`<p>Nearest camp with free beds: <b>${esc(cs.name)}</b> (${esc(cs.loc)}), ${r2.d[cs.loc]} km, ${cs.beds} bed(s) free.</p>`:'<p class="err">No reachable camp with free beds.</p>'}}
- o+=`<svg viewBox="0 0 620 290" style="max-width:100%;margin-top:14px">${GE.map(([a,b,w],i)=>{const[x1,y1]=GN[a],[x2,y2]=GN[b],bl=S.blk.includes(i),on=hp.has(a+'|'+b);return`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${bl?'var(--hi)':on?'var(--acc)':'var(--mut)'}" stroke-width="${on?4:2}" ${bl?'stroke-dasharray="6 5"':''}/><text x="${(x1+x2)/2}" y="${(y1+y2)/2-6}" text-anchor="middle" font-size="11" fill="var(--mut)">${w} km</text>`}).join('')}${Object.entries(GN).map(([n,[x,y]])=>`<circle cx="${x}" cy="${y}" r="9" fill="${n===base?'var(--acc)':'var(--card)'}" stroke="var(--acc)" stroke-width="2.5"/><text x="${x}" y="${y+26}" text-anchor="middle" font-size="12" fill="currentColor">${n}</text>`).join('')}</svg>`;
- o+=`<h3>Road map (real roads)</h3><p class="mut">The graph above chooses which places the route passes through (skipping flooded roads). The map then draws the real road route with directions. Needs internet.</p><button data-a="rmap">Show road route on map</button><div id="rm"></div>`;o+=`<h3>Roads</h3><div class="w"><table><tr><th>Road</th><th>Distance</th><th>Status</th><th></th></tr>${GE.map(([a,b,w],i)=>{const bl=S.blk.includes(i);return`<tr><td>${a} – ${b}</td><td>${w} km</td><td>${bl?'<span class="tag HIGH">Blocked</span>':'<span class="tag">Open</span>'}</td><td><button data-a="blk" data-id="${i}">${bl?'Reopen':'Mark flooded'}</button></td></tr>`}).join('')}</table></div>`;
- return o}
-/* ---- Login + roles. Passwords are stored as hashes (djb2). Demo only: real security needs a server ---- */
-const hs=t=>{let h=5381;for(const c of t)h=(h*33+c.charCodeAt(0))>>>0;return h};
-const USERS={admin:[hs('admin123'),'admin'],rescue:[hs('rescue123'),'rescue'],citizen:[hs('citizen123'),'citizen']};
-const ROLE={admin:['home','dash','rep','queue','camps','route','alloc','img','chat','data'],rescue:['home','dash','rep','queue','camps','route','alloc','img','chat'],citizen:['home','rep','chat']};
-const ACT={del:['admin'],lr:['admin'],lc:['admin'],reset:['admin'],st:['admin','rescue'],process:['admin','rescue'],upc:['admin','rescue'],addc:['admin','rescue'],undo:['admin','rescue'],blk:['admin','rescue'],apply:['admin','rescue']};
-let U=null;const perm=a=>a==='login'||(!!U&&(!ACT[a]||ACT[a].includes(U.role)));
-const LG=()=>`<h2>Login</h2><p class="mut">Demo accounts: admin / admin123, rescue / rescue123, citizen / citizen123.</p><table class="f">${fr('Username','<input id="lu">')}${fr('Password','<input id="lp" type="password">')}</table><button data-a="login">Login</button>${msgd()}`;
-/* ---- Resource allocation: greedy, in priority order, nearest reachable camp that has the needed stock ---- */
-function plan(){S.blk=S.blk||[];const cr={};S.c.forEach(c=>cr[c.id]={beds:c.beds,food:c.food,kits:c.kits});
- return queue().map(r=>{const t=r.type.toLowerCase(),med=t.includes('medic'),fd=t.includes('food')||t.includes('water'),dd=r.loc in GN?dijk(r.loc).d:{};
-  const c=S.c.filter(c=>c.loc in GN&&dd[c.loc]<Infinity&&(fd?cr[c.id].food>0:cr[c.id].beds>0&&(!med||cr[c.id].kits>0))).sort((a,b)=>dd[a.loc]-dd[b.loc])[0];
-  if(c){const k=cr[c.id];if(fd)k.food--;else{k.beds--;if(med)k.kits--}}
-  return{r,need:fd?'Food packet':med?'Bed + medical kit':'Bed',c,km:c?dd[c.loc]:0}})}
-function AL(){const P=plan();return`<h2>Resource Allocation</h2><p class="mut">Pending emergencies are taken in priority order (HIGH first). Each is matched to the nearest reachable camp (Dijkstra) that still has the stock it needs, and that stock is reserved as the list is built.</p>${msgd()}<button data-a="apply" ${P.some(x=>x.c)?'':'disabled'}>Apply Allocation</button> <button data-a="undo" ${UN.length?'':'disabled'}>Undo (${UN.length})</button>${P.length?`<div class="w"><table><tr><th>ID</th><th>Victim</th><th>Location</th><th>Severity</th><th>Needs</th><th>Assigned Camp</th><th>Distance</th></tr>${P.map(x=>`<tr><td>${x.r.id}</td><td>${esc(x.r.name)}</td><td>${esc(x.r.loc)}</td><td>${sv(x.r.sev)}</td><td>${x.need}</td><td>${x.c?esc(x.c.name):'<span class="tag HIGH">None available</span>'}</td><td>${x.c?x.km+' km':'-'}</td></tr>`).join('')}</table></div>`:'<p>No pending emergencies to allocate.</p>'}`}
-/* ---- Flood image analysis: colour-based estimate (not a trained model) ---- */
-const IM=()=>`<h2>Flood Image Analysis</h2><p class="mut">Upload a photo or a short video of a flooded area. Step 1 measures how much of the scene looks like smooth flood water. Step 2 (optional, needs internet) runs a pretrained AI model (MobileNet) that recognises water scenes. The final severity is the higher of the two.</p><input type="file" id="im" accept="image/*,video/*"><div id="ir"></div>`;
-const Z=224,RK={LOW:1,MEDIUM:2,HIGH:3},sevOf=q=>q>=35?'HIGH':q>=15?'MEDIUM':'LOW';
-let LC=null,CS='LOW',MN=null;
-const ld=u=>new Promise((ok,no)=>{if(document.querySelector(`script[src="${u}"]`))return ok();const t=document.createElement('script');t.src=u;t.onload=ok;t.onerror=no;document.head.appendChild(t)});
-function scan(src){const c=document.createElement('canvas');c.width=c.height=Z;const x=c.getContext('2d');x.drawImage(src,0,0,Z,Z);const d=x.getImageData(0,0,Z,Z).data,L=i=>.3*d[i]+.59*d[i+1]+.11*d[i+2];let n=0,t=0;
- for(let y=Z/4;y<Z-1;y++)for(let u=0;u<Z-1;u++){const i=(y*Z+u)*4,r=d[i],g=d[i+1],b=d[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sa=mx?(mx-mn)/mx:0,br=L(i);t++;
-  const col=(b>r+10)||(r>=g&&g>=b&&sa>.1&&sa<.65&&br>50&&br<215);
-  const sm=Math.abs(br-L(i+4))<16&&Math.abs(br-L(i+Z*4))<16;if(col&&sm)n++}
- return{p:n/t*100,c}}
-function imgScan(f){$('#ir').innerHTML='<p class="mut">Analysing...</p>';const out=(ps,c,th)=>{LC=c;const q=Math.round(ps.reduce((a,b)=>a+b,0)/ps.length);CS=sevOf(q);
- $('#ir').innerHTML=`<img src="${th}" alt="analysed frame" style="max-width:320px;border-radius:12px;margin:14px 0;display:block"><p>Flood-water area: <b>${q}%</b> (${ps.length>1?ps.length+' video frames averaged':'photo'})</p><p>Colour-analysis severity: ${sv(CS)}</p><button data-a="ai">Run AI detection</button><div id="ai"></div>`};
- if(f.type.startsWith('video')){const v=document.createElement('video'),ps=[],N=6;let k=0,last;v.muted=true;v.playsInline=true;v.src=URL.createObjectURL(f);
-  v.onerror=()=>{$('#ir').innerHTML='<p class="err">The browser cannot read this video. Try an MP4 file or a photo.</p>'};
-  v.preload='auto';const bad=()=>{$('#ir').innerHTML='<p class="err">Could not analyse this video. Try an MP4 file, or upload a photo.</p>'};v.onerror=bad;setTimeout(()=>{if(!$('#ir img'))bad()},15000);v.onloadeddata=()=>{if(!isFinite(v.duration)||!v.duration)return bad();v.currentTime=v.duration*.5/N};
-  v.onseeked=()=>{let r;try{r=scan(v)}catch(e){return bad()};ps.push(r.p);last=r.c;k++;if(k<N)v.currentTime=v.duration*(k+.5)/N;else out(ps,last,last.toDataURL())}}
- else{const fr=new FileReader(),er=m=>{$('#ir').innerHTML='<p class="err">Could not analyse this image: '+esc(m)+'</p>'};fr.onerror=()=>er('the file could not be read.');
- fr.onload=()=>{const im=new Image();im.onerror=()=>er('the browser could not open it as an image.');im.onload=()=>{try{const r=scan(im);out([r.p],r.c,fr.result)}catch(e){er(e.message+' (a privacy setting that blocks canvas reading can cause this)')}};im.src=fr.result};fr.readAsDataURL(f)}}
-let PH='';
-const ph=r=>r.img?`<img src="${r.img}" alt="report photo" data-z="1" style="width:64px;height:48px;object-fit:cover;border-radius:8px;cursor:zoom-in">`:'-';
-const shrink=(f,cb)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.7))};im.onerror=()=>cb('');im.src=fr.result};fr.onerror=()=>cb('');fr.readAsDataURL(f)};
-/* ---- Real road map: Leaflet + OpenStreetMap tiles, OSRM road routing, Nominatim search (all need internet) ---- */
-const LL={'Dehradun':[30.3165,78.0322],'Rajpur Road':[30.3470,78.0560],'Sahastradhara':[30.3794,78.1306],'Prem Nagar':[30.3330,77.9610],'Clement Town':[30.2640,78.0000],'Rispana':[30.3050,78.0490]};
-let MP=null;
-async function geo(n){if(LL[n])return LL[n];const r=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(n+', Dehradun, India'))).json();return r[0]?[+r[0].lat,+r[0].lon]:null}
-async function roadMap(){const o=$('#rm'),nx=queue()[0];if(!nx){o.innerHTML='<p class="mut">There is no pending emergency.</p>';return}
- S.blk=S.blk||[];o.innerHTML='<p class="mut">Loading the map and road route (needs internet)...</p>';
- try{const{d,p}=dijk(base);if(nx.loc in GN&&d[nx.loc]===Infinity){o.innerHTML='<p class="err">No safe route: every road to this location is blocked.</p>';return}
-  const names=nx.loc in GN?path(p,nx.loc):[base,nx.loc],pts=[];for(const n of names){const c=await geo(n);if(!c)throw new Error('Could not find "'+n+'" on the map.');pts.push(c)}
-  const rs=await(await fetch('https://router.project-osrm.org/route/v1/driving/'+pts.map(c=>c[1]+','+c[0]).join(';')+'?overview=full&geometries=geojson&steps=true')).json();
-  if(!rs.routes||!rs.routes[0])throw new Error('No road route was found.');const rt=rs.routes[0];
-  const stp=rt.legs.flatMap(l=>l.steps).map(t=>{const m=t.maneuver,w=t.name?' '+esc(t.name):'';return m.type==='arrive'?'Arrive at destination':(m.type==='depart'?'Start on':m.modifier&&m.modifier!=='straight'?'Turn '+m.modifier+' onto':'Continue on')+(w||' the road')+' ('+(t.distance>=1000?(t.distance/1000).toFixed(1)+' km':Math.round(t.distance)+' m')+')'});
-  o.innerHTML=`<p class="ok">${names.join(' → ')}: <b>${(rt.distance/1000).toFixed(1)} km</b>, about <b>${Math.round(rt.duration/60)} min</b> by road</p><div id="mp" style="height:380px;border-radius:12px;margin:10px 0"></div><h3>Directions</h3><ol>${stp.map(t=>`<li>${t}</li>`).join('')}</ol>`;
-  if(!window.L){const k=document.createElement('link');k.rel='stylesheet';k.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(k);await ld('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js')}
-  try{MP&&MP.remove()}catch(e){}MP=L.map('mp');L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(MP);
-  const ln=L.polyline(rt.geometry.coordinates.map(c=>[c[1],c[0]]),{color:'#0f766e',weight:5}).addTo(MP);pts.forEach((c,i)=>L.circleMarker(c,{radius:7,color:'#0f766e',fillOpacity:1}).addTo(MP).bindPopup(esc(names[i])));MP.fitBounds(ln.getBounds(),{padding:[20,20]})}
- catch(e){o.innerHTML='<p class="err">Could not load the road map: '+esc(e.message)+' Check your internet connection and try again.</p>'}}
-const V={
-home(){const k=(n,l)=>`<div class="kpi"><b>${n}</b><span>${l}</span></div>`,c=(t,d)=>`<div><b>${t}</b><span>${d}</span></div>`;
- return`<div class="hero"><h2>Welcome to FloodConnect</h2><p>A smart emergency management system for flood response. Citizens' emergency reports are collected, ranked by urgency and sent to rescue teams, while relief camps and their resources are tracked in one place.</p>
+    const sv = s => `<span class="tag ${s}">${s}</span>`;
+    const msgd = () => `<div id="msg" class="${msg[0] === '!' ? 'err' : 'ok'}">${esc(msg.slice(1))}</div>`;
+    const row = (l, n) => `<tr><td>${l}</td><td>${n}</td></tr>`;
+    let H = new Map(), base = 'Dehradun'; const UN = [];
+    const idx = () => { H = new Map(S.r.map(r => [r.id, r])) };/* hash table: report id -> report, O(1) lookup */
+    const snap = () => { UN.push(JSON.stringify({ r: S.r, c: S.c })); if (UN.length > 20) UN.shift() };/* stack push (LIFO) */
+    /* ---- Graph: locations = nodes, roads = weighted edges (km). Sample data - edit to match your map ---- */
+    const GN = { 'Dehradun': [250, 150], 'Rajpur Road': [390, 60], 'Sahastradhara': [510, 140], 'Prem Nagar': [120, 70], 'Clement Town': [110, 235], 'Rispana': [330, 235] };
+    const GE = [['Dehradun', 'Rajpur Road', 5], ['Dehradun', 'Prem Nagar', 8], ['Dehradun', 'Clement Town', 9], ['Dehradun', 'Rispana', 4], ['Rajpur Road', 'Sahastradhara', 6], ['Prem Nagar', 'Clement Town', 7], ['Rispana', 'Clement Town', 5], ['Rajpur Road', 'Prem Nagar', 10]];
+    function adj() { const g = {}; Object.keys(GN).forEach(n => g[n] = []); GE.forEach(([a, b, w], i) => { if (!S.blk.includes(i)) { g[a].push([b, w]); g[b].push([a, w]) } }); return g }
+    function dijk(src) {
+      const g = adj(), d = {}, p = {}, done = {}; Object.keys(g).forEach(n => d[n] = Infinity); d[src] = 0;
+      for (; ;) {
+        let u = null; for (const n in d) if (!done[n] && d[n] < Infinity && (u === null || d[n] < d[u])) u = n; if (u === null) break; done[u] = 1;
+        for (const [v, w] of g[u]) if (d[u] + w < d[v]) { d[v] = d[u] + w; p[v] = u }
+      } return { d, p }
+    }
+    const path = (p, t) => { const a = [t]; while (p[a[0]]) a.unshift(p[a[0]]); return a };
+    function RT() {
+      S.blk = S.blk || []; const nx = queue()[0], { d, p } = dijk(base), hp = new Set();
+      let o = `<h2>Rescue Routes</h2><p class="mut">Locations are graph nodes and roads are weighted edges (km). Dijkstra's algorithm finds the shortest route and skips blocked roads.</p>Rescue base: <select data-a="base">${Object.keys(GN).map(n => `<option${n === base ? ' selected' : ''}>${n}</option>`).join('')}</select><h3>Route to next emergency</h3>`;
+      if (!nx) o += '<p class="mut">The priority queue is empty.</p>';
+      else {
+        o += `<p>#${nx.id} ${esc(nx.name)} at ${esc(nx.loc)} (${nx.sev})</p>`;
+        if (!(nx.loc in GN)) o += `<p class="err">${esc(nx.loc)} is not on the road graph.</p>`;
+        else if (d[nx.loc] === Infinity) o += '<p class="err">No safe route: every road to this location is blocked.</p>';
+        else {
+          const a = path(p, nx.loc); a.forEach((n, i) => { if (i) { hp.add(a[i - 1] + '|' + n); hp.add(n + '|' + a[i - 1]) } }); o += `<p class="ok">${a.join(' → ')} (${d[nx.loc]} km)</p>`;
+          const r2 = dijk(nx.loc), cs = S.c.filter(c => c.beds > 0 && c.loc in GN && r2.d[c.loc] < Infinity).sort((x, y) => r2.d[x.loc] - r2.d[y.loc])[0];
+          o += cs ? `<p>Nearest camp with free beds: <b>${esc(cs.name)}</b> (${esc(cs.loc)}), ${r2.d[cs.loc]} km, ${cs.beds} bed(s) free.</p>` : '<p class="err">No reachable camp with free beds.</p>'
+        }
+      }
+      o += `<svg viewBox="0 0 620 290" style="max-width:100%;margin-top:14px">${GE.map(([a, b, w], i) => { const [x1, y1] = GN[a], [x2, y2] = GN[b], bl = S.blk.includes(i), on = hp.has(a + '|' + b); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${bl ? 'var(--hi)' : on ? 'var(--acc)' : 'var(--mut)'}" stroke-width="${on ? 4 : 2}" ${bl ? 'stroke-dasharray="6 5"' : ''}/><text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 6}" text-anchor="middle" font-size="11" fill="var(--mut)">${w} km</text>` }).join('')}${Object.entries(GN).map(([n, [x, y]]) => `<circle cx="${x}" cy="${y}" r="9" fill="${n === base ? 'var(--acc)' : 'var(--card)'}" stroke="var(--acc)" stroke-width="2.5"/><text x="${x}" y="${y + 26}" text-anchor="middle" font-size="12" fill="currentColor">${n}</text>`).join('')}</svg>`;
+      o += `<h3>Road map (real roads)</h3><p class="mut">The graph above chooses which places the route passes through (skipping flooded roads). The map then draws the real road route with directions. Needs internet.</p><button data-a="rmap">Show road route on map</button><div id="rm"></div>`; o += `<h3>Roads</h3><div class="w"><table><tr><th>Road</th><th>Distance</th><th>Status</th><th></th></tr>${GE.map(([a, b, w], i) => { const bl = S.blk.includes(i); return `<tr><td>${a} – ${b}</td><td>${w} km</td><td>${bl ? '<span class="tag HIGH">Blocked</span>' : '<span class="tag">Open</span>'}</td><td><button data-a="blk" data-id="${i}">${bl ? 'Reopen' : 'Mark flooded'}</button></td></tr>` }).join('')}</table></div>`;
+      return o
+    }
+    /* ---- Login + roles. Passwords are stored as hashes (djb2). Demo only: real security needs a server ---- */
+    const hs = t => { let h = 5381; for (const c of t) h = (h * 33 + c.charCodeAt(0)) >>> 0; return h };
+    const USERS = { admin: [hs('admin123'), 'admin'], rescue: [hs('rescue123'), 'rescue'], citizen: [hs('citizen123'), 'citizen'] };
+    const ROLE = { admin: ['home', 'dash', 'rep', 'queue', 'camps', 'route', 'alloc', 'img', 'chat', 'data'], rescue: ['home', 'dash', 'rep', 'queue', 'camps', 'route', 'alloc', 'img', 'chat'], citizen: ['home', 'rep', 'chat'] };
+    const ACT = { del: ['admin'], lr: ['admin'], lc: ['admin'], reset: ['admin'], st: ['admin', 'rescue'], process: ['admin', 'rescue'], upc: ['admin', 'rescue'], addc: ['admin', 'rescue'], undo: ['admin', 'rescue'], blk: ['admin', 'rescue'], apply: ['admin', 'rescue'] };
+    let U = null; const perm = a => a === 'login' || (!!U && (!ACT[a] || ACT[a].includes(U.role)));
+    const LG = () => `<h2>Login</h2><p class="mut">Demo accounts: admin / admin123, rescue / rescue123, citizen / citizen123.</p><table class="f">${fr('Username', '<input id="lu">')}${fr('Password', '<input id="lp" type="password">')}</table><button data-a="login">Login</button>${msgd()}`;
+    /* ---- Resource allocation: greedy, in priority order, nearest reachable camp that has the needed stock ---- */
+    function plan() {
+      S.blk = S.blk || []; const cr = {}; S.c.forEach(c => cr[c.id] = { beds: c.beds, food: c.food, kits: c.kits });
+      return queue().map(r => {
+        const t = r.type.toLowerCase(), med = t.includes('medic'), fd = t.includes('food') || t.includes('water'), dd = r.loc in GN ? dijk(r.loc).d : {};
+        const c = S.c.filter(c => c.loc in GN && dd[c.loc] < Infinity && (fd ? cr[c.id].food > 0 : cr[c.id].beds > 0 && (!med || cr[c.id].kits > 0))).sort((a, b) => dd[a.loc] - dd[b.loc])[0];
+        if (c) { const k = cr[c.id]; if (fd) k.food--; else { k.beds--; if (med) k.kits-- } }
+        return { r, need: fd ? 'Food packet' : med ? 'Bed + medical kit' : 'Bed', c, km: c ? dd[c.loc] : 0 }
+      })
+    }
+    function AL() { const P = plan(); return `<h2>Resource Allocation</h2><p class="mut">Pending emergencies are taken in priority order (HIGH first). Each is matched to the nearest reachable camp (Dijkstra) that still has the stock it needs, and that stock is reserved as the list is built.</p>${msgd()}<button data-a="apply" ${P.some(x => x.c) ? '' : 'disabled'}>Apply Allocation</button> <button data-a="undo" ${UN.length ? '' : 'disabled'}>Undo (${UN.length})</button>${P.length ? `<div class="w"><table><tr><th>ID</th><th>Victim</th><th>Location</th><th>Severity</th><th>Needs</th><th>Assigned Camp</th><th>Distance</th></tr>${P.map(x => `<tr><td>${x.r.id}</td><td>${esc(x.r.name)}</td><td>${esc(x.r.loc)}</td><td>${sv(x.r.sev)}</td><td>${x.need}</td><td>${x.c ? esc(x.c.name) : '<span class="tag HIGH">None available</span>'}</td><td>${x.c ? x.km + ' km' : '-'}</td></tr>`).join('')}</table></div>` : '<p>No pending emergencies to allocate.</p>'}` }
+    /* ---- Flood image analysis: colour-based estimate (not a trained model) ---- */
+    const IM = () => `<h2>Flood Image Analysis</h2><p class="mut">Upload a photo or a short video of a flooded area. Step 1 measures how much of the scene looks like smooth flood water. Step 2 (optional, needs internet) runs a pretrained AI model (MobileNet) that recognises water scenes. The final severity is the higher of the two.</p><input type="file" id="im" accept="image/*,video/*"><div id="ir"></div>`;
+    const Z = 224, RK = { LOW: 1, MEDIUM: 2, HIGH: 3 }, sevOf = q => q >= 35 ? 'HIGH' : q >= 15 ? 'MEDIUM' : 'LOW';
+    let LC = null, CS = 'LOW', MN = null;
+    const ld = u => new Promise((ok, no) => { if (document.querySelector(`script[src="${u}"]`)) return ok(); const t = document.createElement('script'); t.src = u; t.onload = ok; t.onerror = no; document.head.appendChild(t) });
+    function scan(src) {
+      const c = document.createElement('canvas'); c.width = c.height = Z; const x = c.getContext('2d'); x.drawImage(src, 0, 0, Z, Z); const d = x.getImageData(0, 0, Z, Z).data, L = i => .3 * d[i] + .59 * d[i + 1] + .11 * d[i + 2]; let n = 0, t = 0;
+      for (let y = Z / 4; y < Z - 1; y++)for (let u = 0; u < Z - 1; u++) {
+        const i = (y * Z + u) * 4, r = d[i], g = d[i + 1], b = d[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b), sa = mx ? (mx - mn) / mx : 0, br = L(i); t++;
+        const col = (b > r + 10) || (r >= g && g >= b && sa > .1 && sa < .65 && br > 50 && br < 215);
+        const sm = Math.abs(br - L(i + 4)) < 16 && Math.abs(br - L(i + Z * 4)) < 16; if (col && sm) n++
+      }
+      return { p: n / t * 100, c }
+    }
+    function imgScan(f) {
+      $('#ir').innerHTML = '<p class="mut">Analysing...</p>'; const out = (ps, c, th) => {
+        LC = c; const q = Math.round(ps.reduce((a, b) => a + b, 0) / ps.length); CS = sevOf(q);
+        $('#ir').innerHTML = `<img src="${th}" alt="analysed frame" style="max-width:320px;border-radius:12px;margin:14px 0;display:block"><p>Flood-water area: <b>${q}%</b> (${ps.length > 1 ? ps.length + ' video frames averaged' : 'photo'})</p><p>Colour-analysis severity: ${sv(CS)}</p><button data-a="ai">Run AI detection</button><div id="ai"></div>`
+      };
+      if (f.type.startsWith('video')) {
+        const v = document.createElement('video'), ps = [], N = 6; let k = 0, last; v.muted = true; v.playsInline = true; v.src = URL.createObjectURL(f);
+        v.onerror = () => { $('#ir').innerHTML = '<p class="err">The browser cannot read this video. Try an MP4 file or a photo.</p>' };
+        v.preload = 'auto'; const bad = () => { $('#ir').innerHTML = '<p class="err">Could not analyse this video. Try an MP4 file, or upload a photo.</p>' }; v.onerror = bad; setTimeout(() => { if (!$('#ir img')) bad() }, 15000); v.onloadeddata = () => { if (!isFinite(v.duration) || !v.duration) return bad(); v.currentTime = v.duration * .5 / N };
+        v.onseeked = () => { let r; try { r = scan(v) } catch (e) { return bad() }; ps.push(r.p); last = r.c; k++; if (k < N) v.currentTime = v.duration * (k + .5) / N; else out(ps, last, last.toDataURL()) }
+      }
+      else {
+        const fr = new FileReader(), er = m => { $('#ir').innerHTML = '<p class="err">Could not analyse this image: ' + esc(m) + '</p>' }; fr.onerror = () => er('the file could not be read.');
+        fr.onload = () => { const im = new Image(); im.onerror = () => er('the browser could not open it as an image.'); im.onload = () => { try { const r = scan(im); out([r.p], r.c, fr.result) } catch (e) { er(e.message + ' (a privacy setting that blocks canvas reading can cause this)') } }; im.src = fr.result }; fr.readAsDataURL(f)
+      }
+    }
+    let PH = '';
+    const ph = r => r.img ? `<img src="${r.img}" alt="report photo" data-z="1" style="width:64px;height:48px;object-fit:cover;border-radius:8px;cursor:zoom-in">` : '-';
+    const shrink = (f, cb) => { const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => { const k = Math.min(1, 480 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); cb(c.toDataURL('image/jpeg', .7)) }; im.onerror = () => cb(''); im.src = fr.result }; fr.onerror = () => cb(''); fr.readAsDataURL(f) };
+    /* ---- Real road map: Leaflet + OpenStreetMap tiles, OSRM road routing, Nominatim search (all need internet) ---- */
+    const LL = { 'Dehradun': [30.3165, 78.0322], 'Rajpur Road': [30.3470, 78.0560], 'Sahastradhara': [30.3794, 78.1306], 'Prem Nagar': [30.3330, 77.9610], 'Clement Town': [30.2640, 78.0000], 'Rispana': [30.3050, 78.0490] };
+    let MP = null;
+    async function geo(n) { if (LL[n]) return LL[n]; const r = await (await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(n + ', Dehradun, India'))).json(); return r[0] ? [+r[0].lat, +r[0].lon] : null }
+    async function roadMap() {
+      const o = $('#rm'), nx = queue()[0]; if (!nx) { o.innerHTML = '<p class="mut">There is no pending emergency.</p>'; return }
+      S.blk = S.blk || []; o.innerHTML = '<p class="mut">Loading the map and road route (needs internet)...</p>';
+      try {
+        const { d, p } = dijk(base); if (nx.loc in GN && d[nx.loc] === Infinity) { o.innerHTML = '<p class="err">No safe route: every road to this location is blocked.</p>'; return }
+        const names = nx.loc in GN ? path(p, nx.loc) : [base, nx.loc], pts = []; for (const n of names) { const c = await geo(n); if (!c) throw new Error('Could not find "' + n + '" on the map.'); pts.push(c) }
+        const rs = await (await fetch('https://router.project-osrm.org/route/v1/driving/' + pts.map(c => c[1] + ',' + c[0]).join(';') + '?overview=full&geometries=geojson&steps=true')).json();
+        if (!rs.routes || !rs.routes[0]) throw new Error('No road route was found.'); const rt = rs.routes[0];
+        const stp = rt.legs.flatMap(l => l.steps).map(t => { const m = t.maneuver, w = t.name ? ' ' + esc(t.name) : ''; return m.type === 'arrive' ? 'Arrive at destination' : (m.type === 'depart' ? 'Start on' : m.modifier && m.modifier !== 'straight' ? 'Turn ' + m.modifier + ' onto' : 'Continue on') + (w || ' the road') + ' (' + (t.distance >= 1000 ? (t.distance / 1000).toFixed(1) + ' km' : Math.round(t.distance) + ' m') + ')' });
+        o.innerHTML = `<p class="ok">${names.join(' → ')}: <b>${(rt.distance / 1000).toFixed(1)} km</b>, about <b>${Math.round(rt.duration / 60)} min</b> by road</p><div id="mp" style="height:380px;border-radius:12px;margin:10px 0"></div><h3>Directions</h3><ol>${stp.map(t => `<li>${t}</li>`).join('')}</ol>`;
+        if (!window.L) { const k = document.createElement('link'); k.rel = 'stylesheet'; k.href = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(k); await ld('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js') }
+        try { MP && MP.remove() } catch (e) { } MP = L.map('mp'); L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(MP);
+        const ln = L.polyline(rt.geometry.coordinates.map(c => [c[1], c[0]]), { color: '#0f766e', weight: 5 }).addTo(MP); pts.forEach((c, i) => L.circleMarker(c, { radius: 7, color: '#0f766e', fillOpacity: 1 }).addTo(MP).bindPopup(esc(names[i]))); MP.fitBounds(ln.getBounds(), { padding: [20, 20] })
+      }
+      catch (e) { o.innerHTML = '<p class="err">Could not load the road map: ' + esc(e.message) + ' Check your internet connection and try again.</p>' }
+    }
+    const V = {
+      home() {
+        const k = (n, l) => `<div class="kpi"><b>${n}</b><span>${l}</span></div>`, c = (t, d) => `<div><b>${t}</b><span>${d}</span></div>`;
+        return `<div class="hero"><h2>Welcome to FloodConnect</h2><p>A smart emergency management system for flood response. Citizens' emergency reports are collected, ranked by urgency and sent to rescue teams, while relief camps and their resources are tracked in one place.</p>
  <div class="go"><button data-t="dash">Open Dashboard</button><button data-t="rep">Report an Emergency</button><button data-t="chat">Ask FloodBot</button></div></div>
- <h3>Live Snapshot</h3><div class="kpis">${k(cnt(active),'Active Cases')}${k(queue().length,'Waiting in Queue')}${k(S.c.length,'Relief Camps')}${k(S.c.reduce((a,c)=>a+c.beds,0),'Beds Available')}</div>
- <h3>What You Can Do</h3><div class="hc">${c('Emergency Reports','Register, search, update and delete flood emergency reports.')}${c('Priority Queue','The most urgent case (HIGH first, then MEDIUM, LOW) is always rescued first.')}${c('Relief Camps','Track beds, food packets and medical kits at every camp.')}${c('Dashboard and Graphs','See totals and charts of cases by severity and status.')}${c('FloodBot Assistant','Ask questions about reports, the queue and camps.')}</div>
- <h3>How It Works</h3><div class="hc">${c('1. Report','A victim or volunteer submits a report with location, type and severity.')}${c('2. Prioritise','The report joins the queue, sorted by severity. Same severity: first come, first served.')}${c('3. Rescue','The highest-priority case is processed and a rescue team is assigned.')}${c('4. Shelter','Rescued people are directed to relief camps with free beds and supplies.')}</div>
- <h3>Emergency Helplines</h3><div class="hc">${c('112','National emergency number')}${c('1070','Uttarakhand State Disaster Control Room')}${c('1077','District Control Room')}${c('108','Ambulance')}</div>
+ <h3>Live Snapshot</h3><div class="kpis">${k(cnt(active), 'Active Cases')}${k(queue().length, 'Waiting in Queue')}${k(S.c.length, 'Relief Camps')}${k(S.c.reduce((a, c) => a + c.beds, 0), 'Beds Available')}</div>
+ <h3>What You Can Do</h3><div class="hc">${c('Emergency Reports', 'Register, search, update and delete flood emergency reports.')}${c('Priority Queue', 'The most urgent case (HIGH first, then MEDIUM, LOW) is always rescued first.')}${c('Relief Camps', 'Track beds, food packets and medical kits at every camp.')}${c('Dashboard and Graphs', 'See totals and charts of cases by severity and status.')}${c('FloodBot Assistant', 'Ask questions about reports, the queue and camps.')}</div>
+ <h3>How It Works</h3><div class="hc">${c('1. Report', 'A victim or volunteer submits a report with location, type and severity.')}${c('2. Prioritise', 'The report joins the queue, sorted by severity. Same severity: first come, first served.')}${c('3. Rescue', 'The highest-priority case is processed and a rescue team is assigned.')}${c('4. Shelter', 'Rescued people are directed to relief camps with free beds and supplies.')}</div>
+ <h3>Emergency Helplines</h3><div class="hc">${c('112', 'National emergency number')}${c('1070', 'Uttarakhand State Disaster Control Room')}${c('1077', 'District Control Room')}${c('108', 'Ambulance')}</div>
  <h3>Built With</h3><p class="mut">HTML, CSS and JavaScript with these data structures and algorithms: a sorted singly linked list as the priority queue (same severity keeps first-come order), a hash table (Map) for fast report lookup, a stack for undo, a weighted graph with Dijkstra's algorithm for rescue routes, and arrays for reports and camps. Data is saved in the browser and can be exported in the reports.txt / camps.txt format.</p>`},
-dash(){const h=S.r.filter(r=>r.sev==='HIGH'&&active(r)).pop(),T=S.r.length;
- const k=(n,l)=>`<div class="kpi"><b>${n}</b><span>${l}</span></div>`;
- const br=(l,n,c)=>`<div class="br ${c||''}"><span>${l}</span><div class="tr"><i style="width:${T?n/T*100:0}%"></i></div><b>${n}</b></div>`;
- return`<h2>Rescue Dashboard</h2><div class="kpis">${k(T,'Total Reports')}${k(cnt(active),'Active Cases')}${k(queue().length,'In Queue')}${k(S.c.length,'Relief Camps')}${k(S.c.reduce((a,c)=>a+c.beds,0),'Beds Available')}</div>
- <div class="two"><div><h3>By Priority</h3>${br('High',cnt(r=>r.sev==='HIGH'),'HIGH')}${br('Medium',cnt(r=>r.sev==='MEDIUM'))}${br('Low',cnt(r=>r.sev==='LOW'))}</div>
- <div><h3>By Status</h3>${ST.map(x=>br(x,cnt(r=>r.st===x))).join('')}</div></div>
- <h3 style="margin-top:26px">Latest Active High Priority Case</h3>${h?`<div class="lc"><div><b>#${h.id} ${esc(h.name)}</b><div class="mut">${esc(h.loc)} · ${esc(h.type)}</div></div><div>${sv(h.sev)} <span class="tag">${h.st}</span></div></div>`:'<p class="mut">No active HIGH priority case right now.</p>'}${charts()}`},
-rep(){return`<h2>Emergency Report Management</h2><button data-a="toggle">${add?'Cancel':'Add Report'}</button> ${U&&U.role==='citizen'?'':`<button data-a="undo" ${UN.length?'':'disabled'}>Undo (${UN.length})</button>`}
- &nbsp;Search: <input id="q" placeholder="ID, name or location" value="${esc(q)}">${msgd()}${add?repForm():''}<div id="list"></div>`},
-queue(){const L=queue();return`<h2>Priority Management</h2><button data-a="process" ${L.length?'':'disabled'}>Process Highest-Priority Emergency</button>${msgd()}
- ${L.length?`<div class="w"><table><tr><th>Priority</th><th>ID</th><th>Victim</th><th>Location</th><th>Severity</th><th>Photo</th></tr>${L.map(r=>`<tr><td>${PR[r.sev]}</td><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.loc)}</td><td>${sv(r.sev)}</td><td>${ph(r)}</td></tr>`).join('')}</table></div><p>Emergencies waiting: ${L.length}</p>`:'<p>The priority queue is empty. Nothing to process.</p>'}`},
-camps(){return`<h2>Relief Camp Management</h2><button data-a="toggle">${add?'Cancel':'Add Camp'}</button> <button data-a="undo" ${UN.length?'':'disabled'}>Undo (${UN.length})</button>${msgd()}${add?campForm():''}
- ${S.c.length?`<div class="w"><table><tr><th>ID</th><th>Name</th><th>Location</th><th>Capacity</th><th>Available Beds</th><th>Food Packets</th><th>Medical Kits</th><th></th></tr>${S.c.map(c=>`<tr><td>${c.id}</td><td>${esc(c.name)}</td><td>${esc(c.loc)}</td><td>${c.cap}</td><td><input type="number" min="0" id="b${c.id}" value="${c.beds}"></td><td><input type="number" min="0" id="f${c.id}" value="${c.food}"></td><td><input type="number" min="0" id="k${c.id}" value="${c.kits}"></td><td><button data-a="upc" data-id="${c.id}">Update</button></td></tr>`).join('')}</table></div><p>Total camps: ${S.c.length}</p>`:'<p>No relief camps found.</p>'}`},
-route(){return RT()},alloc(){return AL()},img(){return IM()},login(){return LG()},
-chat(){return`<h2>FloodBot</h2><div class="cb" id="cb">${chat.map(m=>`<div class="m${m.u?' u':''}">${esc(m.t)}</div>`).join('')}</div>
+      dash() {
+        const h = S.r.filter(r => r.sev === 'HIGH' && active(r)).pop(), T = S.r.length;
+        const k = (n, l) => `<div class="kpi"><b>${n}</b><span>${l}</span></div>`;
+        const br = (l, n, c) => `<div class="br ${c || ''}"><span>${l}</span><div class="tr"><i style="width:${T ? n / T * 100 : 0}%"></i></div><b>${n}</b></div>`;
+        return `<h2>Rescue Dashboard</h2><div class="kpis">${k(T, 'Total Reports')}${k(cnt(active), 'Active Cases')}${k(queue().length, 'In Queue')}${k(S.c.length, 'Relief Camps')}${k(S.c.reduce((a, c) => a + c.beds, 0), 'Beds Available')}</div>
+ <div class="two"><div><h3>By Priority</h3>${br('High', cnt(r => r.sev === 'HIGH'), 'HIGH')}${br('Medium', cnt(r => r.sev === 'MEDIUM'))}${br('Low', cnt(r => r.sev === 'LOW'))}</div>
+ <div><h3>By Status</h3>${ST.map(x => br(x, cnt(r => r.st === x))).join('')}</div></div>
+ <h3 style="margin-top:26px">Latest Active High Priority Case</h3>${h ? `<div class="lc"><div><b>#${h.id} ${esc(h.name)}</b><div class="mut">${esc(h.loc)} · ${esc(h.type)}</div></div><div>${sv(h.sev)} <span class="tag">${h.st}</span></div></div>` : '<p class="mut">No active HIGH priority case right now.</p>'}${charts()}`
+      },
+      rep() {
+        return `<h2>Emergency Report Management</h2><button data-a="toggle">${add ? 'Cancel' : 'Add Report'}</button> ${U && U.role === 'citizen' ? '' : `<button data-a="undo" ${UN.length ? '' : 'disabled'}>Undo (${UN.length})</button>`}
+ &nbsp;Search: <input id="q" placeholder="ID, name or location" value="${esc(q)}">${msgd()}${add ? repForm() : ''}<div id="list"></div>`
+      },
+      queue() {
+        const L = queue(); return `<h2>Priority Management</h2><button data-a="process" ${L.length ? '' : 'disabled'}>Process Highest-Priority Emergency</button>${msgd()}
+ ${L.length ? `<div class="w"><table><tr><th>Priority</th><th>ID</th><th>Victim</th><th>Location</th><th>Severity</th><th>Photo</th></tr>${L.map(r => `<tr><td>${PR[r.sev]}</td><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.loc)}</td><td>${sv(r.sev)}</td><td>${ph(r)}</td></tr>`).join('')}</table></div><p>Emergencies waiting: ${L.length}</p>` : '<p>The priority queue is empty. Nothing to process.</p>'}`
+      },
+      camps() {
+        return `<h2>Relief Camp Management</h2><button data-a="toggle">${add ? 'Cancel' : 'Add Camp'}</button> <button data-a="undo" ${UN.length ? '' : 'disabled'}>Undo (${UN.length})</button>${msgd()}${add ? campForm() : ''}
+ ${S.c.length ? `<div class="w"><table><tr><th>ID</th><th>Name</th><th>Location</th><th>Capacity</th><th>Available Beds</th><th>Food Packets</th><th>Medical Kits</th><th></th></tr>${S.c.map(c => `<tr><td>${c.id}</td><td>${esc(c.name)}</td><td>${esc(c.loc)}</td><td>${c.cap}</td><td><input type="number" min="0" id="b${c.id}" value="${c.beds}"></td><td><input type="number" min="0" id="f${c.id}" value="${c.food}"></td><td><input type="number" min="0" id="k${c.id}" value="${c.kits}"></td><td><button data-a="upc" data-id="${c.id}">Update</button></td></tr>`).join('')}</table></div><p>Total camps: ${S.c.length}</p>` : '<p>No relief camps found.</p>'}`
+      },
+      route() { return RT() }, alloc() { return AL() }, img() { return IM() }, login() { return LG() },
+      chat() {
+        return `<h2>FloodBot</h2><div class="cb" id="cb">${chat.map(m => `<div class="m${m.u ? ' u' : ''}">${esc(m.t)}</div>`).join('')}</div>
  <div class="cr"><input id="ci" placeholder="Ask about reports, queue, camps..." autocomplete="off"><button data-a="send">Send</button></div>
- <div class="sg">${(U&&U.role==='citizen'?CHELP:HELP).map(h=>`<button data-a="ask" data-q="${h}">${h}</button>`).join('')}</div>`},
-data(){return`<h2>Data Files</h2><p>Same format as reports.txt and camps.txt (fields separated by |).</p>
+ <div class="sg">${(U && U.role === 'citizen' ? CHELP : HELP).map(h => `<button data-a="ask" data-q="${h}">${h}</button>`).join('')}</div>`
+      },
+      data() {
+        return `<h2>Data Files</h2><p>Same format as reports.txt and camps.txt (fields separated by |).</p>
  <h3>reports.txt</h3><textarea id="tr">${esc(outR())}</textarea><button data-a="lr">Load Reports</button> <button data-a="cp" data-s="#tr">Copy</button>
  <h3>camps.txt</h3><textarea id="tc">${esc(outC())}</textarea><button data-a="lc">Load Camps</button> <button data-a="cp" data-s="#tc">Copy</button>
- ${msgd()}<h3>Reset</h3><button data-a="reset">Restore Sample Data</button>`}
-};
-function listR(){if(U&&U.role==='citizen'){$('#list').innerHTML='<p class="mut">Submitted reports are visible to rescue teams only.</p>';return}const k=q.toLowerCase();const L=S.r.filter(r=>!k||String(r.id)===k||r.name.toLowerCase().includes(k)||r.loc.toLowerCase().includes(k));
- $('#list').innerHTML=L.length?`<div class="w"><table><tr><th>ID</th><th>Victim</th><th>Location</th><th>Type</th><th>Severity</th><th>Description</th><th>Photo</th><th>Contact</th><th>Status</th><th></th></tr>${L.map(r=>`<tr><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.loc)}</td><td>${esc(r.type)}</td><td>${sv(r.sev)}</td><td>${esc(r.desc)}</td><td>${ph(r)}</td><td>${esc(r.tel)}</td><td><select data-a="st" data-id="${r.id}">${ST.map(x=>`<option${x===r.st?' selected':''}>${x}</option>`).join('')}</select></td><td><button data-a="del" data-id="${r.id}">Delete</button></td></tr>`).join('')}</table></div><p>Total reports: ${S.r.length}</p>`:'<p>No reports found.</p>'}
-const fr=(l,i)=>`<tr><td>${l}</td><td>${i}</td></tr>`;
-function repForm(){return`<table class="f">${fr('Report ID',`<input id="f_id" type="number" value="${nextId(S.r)}">`)}${fr('Victim Name','<input id="f_name">')}${fr('Location','<input id="f_loc" list="gl" placeholder="Pick or type">')}${fr('Emergency Type','<input id="f_type">')}${fr('Severity','<select id="f_sev"><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select>')}${fr('Description','<input id="f_desc">')}${fr('Contact Number (10 digits)','<input id="f_tel" inputmode="numeric" maxlength="10">')}${fr('Photo (optional)','<input id="f_img" type="file" accept="image/*">')}</table><datalist id="gl">${Object.keys(GN).map(n=>`<option value="${n}">`).join('')}</datalist><div id="f_pvd"></div><button data-a="addr">Save Report</button>`}
-function campForm(){return`<table class="f">${fr('Camp ID',`<input id="c_id" type="number" value="${nextId(S.c)}">`)}${fr('Camp Name','<input id="c_name">')}${fr('Location','<input id="c_loc" list="gl" placeholder="Pick or type">')}${fr('Capacity','<input id="c_cap" type="number" min="1">')}${fr('Available Beds','<input id="c_beds" type="number" min="0">')}${fr('Food Packets','<input id="c_food" type="number" min="0" value="0">')}${fr('Medical Kits','<input id="c_kits" type="number" min="0" value="0">')}</table><datalist id="gl">${Object.keys(GN).map(n=>`<option value="${n}">`).join('')}</datalist><button data-a="addc">Save Camp</button>`}
-const v=id=>($(id).value||'').trim().replace(/\|/g,'/'),num=id=>{const s=$(id).value.trim();return/^\d{1,9}$/.test(s)?+s:-1};
-const A={
-toggle(){add=!add;msg='';PH='';render()},
-addr(){const id=num('#f_id'),r={id,name:v('#f_name'),loc:v('#f_loc'),type:v('#f_type'),sev:$('#f_sev').value,desc:v('#f_desc'),tel:v('#f_tel'),st:'Pending',img:PH};
- if(id<1)return err('Enter a valid report ID.');if(H.has(id))return err(`Report ID ${id} already exists. Use a different ID.`);
- r.loc=canon(r.loc);if(!r.name||!r.loc||!r.type||!r.desc)return err('All fields are required.');if(!/^\d{10}$/.test(r.tel))return err('Contact number must be exactly 10 digits.');
- snap();S.r.push(r);save();add=false;PH='';msg=`?Report #${id} added to the priority queue (Priority ${PR[r.sev]}).`;render()},
-st(d,el){const r=H.get(+d.id);snap();r.st=el.value;save();msg=`?Report #${r.id} is now ${r.st}.`;render()},
-del(d){const r=H.get(+d.id);if(!confirm(`Delete report #${r.id} (${r.name})?`))return;snap();S.r=S.r.filter(x=>x!==r);save();msg=`?Report #${r.id} deleted.`;render()},
-process(){const r=queue()[0];if(!r)return;snap();r.st='In Progress';save();msg=`?Rescue team assigned to #${r.id} ${r.name}, ${r.loc} (${r.sev}). Status: In Progress.`;render()},
-addc(){const c={id:num('#c_id'),name:v('#c_name'),loc:v('#c_loc'),cap:num('#c_cap'),beds:num('#c_beds'),food:num('#c_food'),kits:num('#c_kits')};
- if(c.id<1)return err('Enter a valid camp ID.');if(S.c.some(x=>x.id===c.id))return err(`Camp ID ${c.id} already exists.`);
- c.loc=canon(c.loc);if(!c.name||!c.loc)return err('Name and location are required.');if(c.cap<1||c.beds<0||c.food<0||c.kits<0)return err('Enter whole numbers; capacity must be at least 1.');
- if(c.beds>c.cap)return err('Available beds cannot exceed capacity.');snap();S.c.push(c);save();add=false;msg=`?Camp #${c.id} added.`;render()},
-upc(d){const c=S.c.find(x=>x.id==d.id),b=num('#b'+c.id),f=num('#f'+c.id),k=num('#k'+c.id);
- if(b<0||f<0||k<0)return err('Enter whole numbers, 0 or more.');if(b>c.cap)return err(`Beds cannot exceed capacity (${c.cap}).`);
- snap();c.beds=b;c.food=f;c.kits=k;save();msg=`?Camp #${c.id} updated.`;render()},
-lr(){const a=parseR($('#tr').value);S.r=a;save();msg=`?Loaded ${a.length} report(s). Invalid or duplicate lines were skipped.`;render()},
-lc(){const a=parseC($('#tc').value);S.c=a;save();msg=`?Loaded ${a.length} camp(s). Invalid or duplicate lines were skipped.`;render()},
-cp(d){const t=$(d.s);t.select();try{navigator.clipboard.writeText(t.value);msg='?Copied.'}catch(e){msg='!Select the text and copy it manually.'}render()},
-send(){const i=$('#ci'),t=i.value.trim();if(t)A.ask({q:t})},
-ask(d){chat.push({u:1,t:d.q},{u:0,t:botReply(d.q)});render()},
-rmap(){roadMap()},
-async ai(){const o=$('#ai');if(!LC||!o)return;o.innerHTML='<p class="mut">Loading the AI model (needs internet; the first time takes a few seconds)...</p>';
- try{await ld('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');await ld('https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js');
-  MN=MN||await mobilenet.load();const pr=await MN.classify(LC,5),ws=pr.filter(p=>/lake|sea|sand ?bar|dam|boat|canoe|pier|dock|breakwater|fountain|paddle|catamaran|yawl|schooner|gondola|ship|liner|trimaran|valley|geyser|swimming/i.test(p.className)).reduce((a,p)=>a+p.probability,0),
-  as=ws>=.7?'HIGH':ws>=.4?'MEDIUM':'LOW',fin=RK[as]>RK[CS]?as:CS;
-  o.innerHTML=`<h3>AI detection</h3><p>Top guesses: ${pr.slice(0,3).map(p=>esc(p.className.split(',')[0])+' '+Math.round(p.probability*100)+'%').join(', ')}</p><p>Water-scene confidence: <b>${Math.round(ws*100)}%</b> (${sv(as)})</p><p>Final severity (higher of colour analysis and AI): ${sv(fin)}</p>`}
- catch(e){o.innerHTML='<p class="err">The AI model could not load. Check your internet connection and try again.</p>'}},
-login(){const u=USERS[$('#lu').value.trim().toLowerCase()];if(!u||u[0]!==hs($('#lp').value))return err('Wrong username or password.');U={n:$('#lu').value.trim().toLowerCase(),role:u[1]};tab='home';msg='';chat=[{u:0,t:botHi()}];render()},
-logout(){U=null;msg='';chat=[{u:0,t:STAFFHI}];render()},
-apply(){const P=plan().filter(x=>x.c);if(!P.length)return;snap();P.forEach(x=>{if(x.need==='Food packet')x.c.food--;else{x.c.beds--;if(x.need!=='Bed')x.c.kits--}x.r.st='In Progress'});save();msg=`?Allocated ${P.length} emergency(ies). Camp stock updated.`;render()},
-base(d,el){base=el.value;render()},
-blk(d){const i=+d.id,k=S.blk.indexOf(i);k<0?S.blk.push(i):S.blk.splice(k,1);save();render()},
-undo(){if(!UN.length)return;const o=JSON.parse(UN.pop());S.r=o.r;S.c=o.c;save();msg='?Last action undone.';render()},
-reset(){if(!confirm('Replace all data with the sample data?'))return;S={r:parseR(SR),c:parseC(SC)};save();msg='?Sample data restored.';render()}
-};
-function err(m){msg='!'+m;const e=$('#msg');if(e){e.className='err';e.textContent=m}else render()}
-const TT={home:'Home',dash:'Dashboard',rep:'Emergency Reports',queue:'Priority Queue',camps:'Relief Camps',route:'Rescue Routes',alloc:'Resource Allocation',img:'Flood Image Analysis',login:'Login',chat:'FloodBot Assistant',data:'Data Files'};
-function render(){idx();document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('on',b.dataset.t===tab);b.style.display=U&&ROLE[U.role].includes(b.dataset.t)?'':'none'});if(!U)tab='login';else if(!ROLE[U.role].includes(tab))tab='home';$('#um').innerHTML=U?`<p class="mut">${esc(U.n)} (${U.role})</p><button data-a="logout" style="padding:9px 14px;border:0;border-radius:10px;background:var(--acc2);color:var(--acc);font:inherit;cursor:pointer">Logout</button>`:'';
- $('#pt').textContent=TT[tab];$('#main').innerHTML=V[tab]();if(tab==='rep')listR();if(tab==='chat'){const b=$('#cb');b.scrollTop=b.scrollHeight;if(chat.length>1)$('#ci').focus()}}
-document.addEventListener('click',e=>{const z=e.target.closest('img[data-z]');if(z){const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);display:grid;place-items:center;z-index:9;cursor:zoom-out';o.innerHTML=`<img src="${z.src}" alt="report photo" style="max-width:92vw;max-height:92vh;border-radius:10px">`;o.onclick=()=>o.remove();document.body.appendChild(o);return}
- const t=e.target.closest('[data-t]');if(t){tab=t.dataset.t;add=false;msg='';render();scrollTo(0,0);return}
- const b=e.target.closest('button[data-a]');if(b&&perm(b.dataset.a))A[b.dataset.a](b.dataset,b)});
-document.addEventListener('change',e=>{if(e.target.tagName==='SELECT'&&e.target.dataset.a&&perm(e.target.dataset.a))A[e.target.dataset.a](e.target.dataset,e.target)});
-document.addEventListener('change',e=>{if(e.target.id==='f_img'){const f=e.target.files[0];if(!f){PH='';$('#f_pvd').innerHTML='';return}shrink(f,d=>{PH=d;$('#f_pvd').innerHTML=d?`<img src="${d}" alt="preview" style="max-width:200px;border-radius:10px;margin:8px 0;display:block">`:'<p class="err">This photo could not be read. Use a JPG or PNG.</p>'})}});
-document.addEventListener('change',e=>{if(e.target.id==='im'&&e.target.files[0])imgScan(e.target.files[0])});
-document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value.trim();listR()}});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='lp')A.login();if(e.key==='Enter'&&e.target.id==='ci')A.send()});
-render();
-</script></body></html>
+ ${msgd()}<h3>Reset</h3><button data-a="reset">Restore Sample Data</button>`
+      }
+    };
+    function listR() {
+      if (U && U.role === 'citizen') { $('#list').innerHTML = '<p class="mut">Submitted reports are visible to rescue teams only.</p>'; return } const k = q.toLowerCase(); const L = S.r.filter(r => !k || String(r.id) === k || r.name.toLowerCase().includes(k) || r.loc.toLowerCase().includes(k));
+      $('#list').innerHTML = L.length ? `<div class="w"><table><tr><th>ID</th><th>Victim</th><th>Location</th><th>Type</th><th>Severity</th><th>Description</th><th>Photo</th><th>Contact</th><th>Status</th><th></th></tr>${L.map(r => `<tr><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.loc)}</td><td>${esc(r.type)}</td><td>${sv(r.sev)}</td><td>${esc(r.desc)}</td><td>${ph(r)}</td><td>${esc(r.tel)}</td><td><select data-a="st" data-id="${r.id}">${ST.map(x => `<option${x === r.st ? ' selected' : ''}>${x}</option>`).join('')}</select></td><td><button data-a="del" data-id="${r.id}">Delete</button></td></tr>`).join('')}</table></div><p>Total reports: ${S.r.length}</p>` : '<p>No reports found.</p>'
+    }
+    const fr = (l, i) => `<tr><td>${l}</td><td>${i}</td></tr>`;
+    function repForm() { return `<table class="f">${fr('Report ID', `<input id="f_id" type="number" value="${nextId(S.r)}">`)}${fr('Victim Name', '<input id="f_name">')}${fr('Location', '<input id="f_loc" list="gl" placeholder="Pick or type">')}${fr('Emergency Type', '<input id="f_type">')}${fr('Severity', '<select id="f_sev"><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select>')}${fr('Description', '<input id="f_desc">')}${fr('Contact Number (10 digits)', '<input id="f_tel" inputmode="numeric" maxlength="10">')}${fr('Photo (optional)', '<input id="f_img" type="file" accept="image/*">')}</table><datalist id="gl">${Object.keys(GN).map(n => `<option value="${n}">`).join('')}</datalist><div id="f_pvd"></div><button data-a="addr">Save Report</button>` }
+    function campForm() { return `<table class="f">${fr('Camp ID', `<input id="c_id" type="number" value="${nextId(S.c)}">`)}${fr('Camp Name', '<input id="c_name">')}${fr('Location', '<input id="c_loc" list="gl" placeholder="Pick or type">')}${fr('Capacity', '<input id="c_cap" type="number" min="1">')}${fr('Available Beds', '<input id="c_beds" type="number" min="0">')}${fr('Food Packets', '<input id="c_food" type="number" min="0" value="0">')}${fr('Medical Kits', '<input id="c_kits" type="number" min="0" value="0">')}</table><datalist id="gl">${Object.keys(GN).map(n => `<option value="${n}">`).join('')}</datalist><button data-a="addc">Save Camp</button>` }
+    const v = id => ($(id).value || '').trim().replace(/\|/g, '/'), num = id => { const s = $(id).value.trim(); return /^\d{1,9}$/.test(s) ? +s : -1 };
+    const A = {
+      toggle() { add = !add; msg = ''; PH = ''; render() },
+      addr() {
+        const id = num('#f_id'), r = { id, name: v('#f_name'), loc: v('#f_loc'), type: v('#f_type'), sev: $('#f_sev').value, desc: v('#f_desc'), tel: v('#f_tel'), st: 'Pending', img: PH };
+        if (id < 1) return err('Enter a valid report ID.'); if (H.has(id)) return err(`Report ID ${id} already exists. Use a different ID.`);
+        r.loc = canon(r.loc); if (!r.name || !r.loc || !r.type || !r.desc) return err('All fields are required.'); if (!/^\d{10}$/.test(r.tel)) return err('Contact number must be exactly 10 digits.');
+        snap(); S.r.push(r); save(); add = false; PH = ''; msg = `?Report #${id} added to the priority queue (Priority ${PR[r.sev]}).`; render()
+      },
+      st(d, el) { const r = H.get(+d.id); snap(); r.st = el.value; save(); msg = `?Report #${r.id} is now ${r.st}.`; render() },
+      del(d) { const r = H.get(+d.id); if (!confirm(`Delete report #${r.id} (${r.name})?`)) return; snap(); S.r = S.r.filter(x => x !== r); save(); msg = `?Report #${r.id} deleted.`; render() },
+      process() { const r = queue()[0]; if (!r) return; snap(); r.st = 'In Progress'; save(); msg = `?Rescue team assigned to #${r.id} ${r.name}, ${r.loc} (${r.sev}). Status: In Progress.`; render() },
+      addc() {
+        const c = { id: num('#c_id'), name: v('#c_name'), loc: v('#c_loc'), cap: num('#c_cap'), beds: num('#c_beds'), food: num('#c_food'), kits: num('#c_kits') };
+        if (c.id < 1) return err('Enter a valid camp ID.'); if (S.c.some(x => x.id === c.id)) return err(`Camp ID ${c.id} already exists.`);
+        c.loc = canon(c.loc); if (!c.name || !c.loc) return err('Name and location are required.'); if (c.cap < 1 || c.beds < 0 || c.food < 0 || c.kits < 0) return err('Enter whole numbers; capacity must be at least 1.');
+        if (c.beds > c.cap) return err('Available beds cannot exceed capacity.'); snap(); S.c.push(c); save(); add = false; msg = `?Camp #${c.id} added.`; render()
+      },
+      upc(d) {
+        const c = S.c.find(x => x.id == d.id), b = num('#b' + c.id), f = num('#f' + c.id), k = num('#k' + c.id);
+        if (b < 0 || f < 0 || k < 0) return err('Enter whole numbers, 0 or more.'); if (b > c.cap) return err(`Beds cannot exceed capacity (${c.cap}).`);
+        snap(); c.beds = b; c.food = f; c.kits = k; save(); msg = `?Camp #${c.id} updated.`; render()
+      },
+      lr() { const a = parseR($('#tr').value); S.r = a; save(); msg = `?Loaded ${a.length} report(s). Invalid or duplicate lines were skipped.`; render() },
+      lc() { const a = parseC($('#tc').value); S.c = a; save(); msg = `?Loaded ${a.length} camp(s). Invalid or duplicate lines were skipped.`; render() },
+      cp(d) { const t = $(d.s); t.select(); try { navigator.clipboard.writeText(t.value); msg = '?Copied.' } catch (e) { msg = '!Select the text and copy it manually.' } render() },
+      send() { const i = $('#ci'), t = i.value.trim(); if (t) A.ask({ q: t }) },
+      ask(d) { chat.push({ u: 1, t: d.q }, { u: 0, t: botReply(d.q) }); render() },
+      rmap() { roadMap() },
+      async ai() {
+        const o = $('#ai'); if (!LC || !o) return; o.innerHTML = '<p class="mut">Loading the AI model (needs internet; the first time takes a few seconds)...</p>';
+        try {
+          await ld('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js'); await ld('https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js');
+          MN = MN || await mobilenet.load(); const pr = await MN.classify(LC, 5), ws = pr.filter(p => /lake|sea|sand ?bar|dam|boat|canoe|pier|dock|breakwater|fountain|paddle|catamaran|yawl|schooner|gondola|ship|liner|trimaran|valley|geyser|swimming/i.test(p.className)).reduce((a, p) => a + p.probability, 0),
+            as = ws >= .7 ? 'HIGH' : ws >= .4 ? 'MEDIUM' : 'LOW', fin = RK[as] > RK[CS] ? as : CS;
+          o.innerHTML = `<h3>AI detection</h3><p>Top guesses: ${pr.slice(0, 3).map(p => esc(p.className.split(',')[0]) + ' ' + Math.round(p.probability * 100) + '%').join(', ')}</p><p>Water-scene confidence: <b>${Math.round(ws * 100)}%</b> (${sv(as)})</p><p>Final severity (higher of colour analysis and AI): ${sv(fin)}</p>`
+        }
+        catch (e) { o.innerHTML = '<p class="err">The AI model could not load. Check your internet connection and try again.</p>' }
+      },
+      login() { const u = USERS[$('#lu').value.trim().toLowerCase()]; if (!u || u[0] !== hs($('#lp').value)) return err('Wrong username or password.'); U = { n: $('#lu').value.trim().toLowerCase(), role: u[1] }; tab = 'home'; msg = ''; chat = [{ u: 0, t: botHi() }]; render() },
+      logout() { U = null; msg = ''; chat = [{ u: 0, t: STAFFHI }]; render() },
+      apply() { const P = plan().filter(x => x.c); if (!P.length) return; snap(); P.forEach(x => { if (x.need === 'Food packet') x.c.food--; else { x.c.beds--; if (x.need !== 'Bed') x.c.kits-- } x.r.st = 'In Progress' }); save(); msg = `?Allocated ${P.length} emergency(ies). Camp stock updated.`; render() },
+      base(d, el) { base = el.value; render() },
+      blk(d) { const i = +d.id, k = S.blk.indexOf(i); k < 0 ? S.blk.push(i) : S.blk.splice(k, 1); save(); render() },
+      undo() { if (!UN.length) return; const o = JSON.parse(UN.pop()); S.r = o.r; S.c = o.c; save(); msg = '?Last action undone.'; render() },
+      reset() { if (!confirm('Replace all data with the sample data?')) return; S = { r: parseR(SR), c: parseC(SC) }; save(); msg = '?Sample data restored.'; render() }
+    };
+    function err(m) { msg = '!' + m; const e = $('#msg'); if (e) { e.className = 'err'; e.textContent = m } else render() }
+    const TT = { home: 'Home', dash: 'Dashboard', rep: 'Emergency Reports', queue: 'Priority Queue', camps: 'Relief Camps', route: 'Rescue Routes', alloc: 'Resource Allocation', img: 'Flood Image Analysis', login: 'Login', chat: 'FloodBot Assistant', data: 'Data Files' };
+    function render() {
+      idx(); document.querySelectorAll('nav button').forEach(b => { b.classList.toggle('on', b.dataset.t === tab); b.style.display = U && ROLE[U.role].includes(b.dataset.t) ? '' : 'none' }); if (!U) tab = 'login'; else if (!ROLE[U.role].includes(tab)) tab = 'home'; $('#um').innerHTML = U ? `<p class="mut">${esc(U.n)} (${U.role})</p><button data-a="logout" style="padding:9px 14px;border:0;border-radius:10px;background:var(--acc2);color:var(--acc);font:inherit;cursor:pointer">Logout</button>` : '';
+      $('#pt').textContent = TT[tab]; $('#main').innerHTML = V[tab](); if (tab === 'rep') listR(); if (tab === 'chat') { const b = $('#cb'); b.scrollTop = b.scrollHeight; if (chat.length > 1) $('#ci').focus() }
+    }
+    document.addEventListener('click', e => {
+      const z = e.target.closest('img[data-z]'); if (z) { const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);display:grid;place-items:center;z-index:9;cursor:zoom-out'; o.innerHTML = `<img src="${z.src}" alt="report photo" style="max-width:92vw;max-height:92vh;border-radius:10px">`; o.onclick = () => o.remove(); document.body.appendChild(o); return }
+      const t = e.target.closest('[data-t]'); if (t) { tab = t.dataset.t; add = false; msg = ''; render(); scrollTo(0, 0); return }
+      const b = e.target.closest('button[data-a]'); if (b && perm(b.dataset.a)) A[b.dataset.a](b.dataset, b)
+    });
+    document.addEventListener('change', e => { if (e.target.tagName === 'SELECT' && e.target.dataset.a && perm(e.target.dataset.a)) A[e.target.dataset.a](e.target.dataset, e.target) });
+    document.addEventListener('change', e => { if (e.target.id === 'f_img') { const f = e.target.files[0]; if (!f) { PH = ''; $('#f_pvd').innerHTML = ''; return } shrink(f, d => { PH = d; $('#f_pvd').innerHTML = d ? `<img src="${d}" alt="preview" style="max-width:200px;border-radius:10px;margin:8px 0;display:block">` : '<p class="err">This photo could not be read. Use a JPG or PNG.</p>' }) } });
+    document.addEventListener('change', e => { if (e.target.id === 'im' && e.target.files[0]) imgScan(e.target.files[0]) });
+    document.addEventListener('input', e => { if (e.target.id === 'q') { q = e.target.value.trim(); listR() } });
+    document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'lp') A.login(); if (e.key === 'Enter' && e.target.id === 'ci') A.send() });
+    render();
+  </script>
+</body>
+
+</html>

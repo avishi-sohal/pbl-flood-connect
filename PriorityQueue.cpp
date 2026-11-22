@@ -70,6 +70,21 @@ bool PriorityQueue::contains(int id) const {
     return false;
 }
 
+void PriorityQueue::clear() {
+    while (front != NULL) {
+        QueueNode* next = front->next;
+        delete front;
+        front = next;
+    }
+    size = 0;
+}
+
+void PriorityQueue::toVector(vector<EmergencyReport>& out) const {
+    out.clear();
+    for (QueueNode* cur = front; cur != NULL; cur = cur->next)
+        out.push_back(cur->data);
+}
+
 bool PriorityQueue::isEmpty() const { return front == NULL; }
 int PriorityQueue::getSize() const { return size; }
 

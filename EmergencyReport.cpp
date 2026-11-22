@@ -125,16 +125,12 @@ void ReportManager::insertAtEnd(const EmergencyReport& r) {
         tail = node;
     }
     count++;
+    index.insert(r.getId(), node);
 }
 
 // Walk the list from the head until the ID matches
 ReportNode* ReportManager::findNode(int id) const {
-    ReportNode* cur = head;
-    while (cur != NULL) {
-        if (cur->data.getId() == id) return cur;
-        cur = cur->next;
-    }
-    return NULL;
+    return index.find(id);
 }
 
 bool ReportManager::exists(int id) const { return findNode(id) != NULL; }
@@ -319,6 +315,7 @@ void ReportManager::deleteReport(PriorityQueue& pq) {
     if (prev == NULL) head = cur->next;    // deleting the first node
     else prev->next = cur->next;
     if (cur == tail) tail = prev;          // deleting the last node
+    index.erase(id);
     delete cur;
     count--;
 
@@ -355,6 +352,22 @@ void ReportManager::menu(PriorityQueue& pq) {
 // ------------------------- dashboard numbers -------------------------
 
 int ReportManager::getTotal() const { return count; }
+
+void ReportManager::snapshot(vector<string>& out) const {
+    out.clear();
+    for (ReportNode* cur = head; cur != NULL; cur = cur->next)
+        out.push_back(cur->data.toFileLine());
+}
+
+void ReportManager::restore(const vector<string>& data) {
+    while (head != NULL) { ReportNode* next = head->next; delete head; head = next; }
+    tail = NULL; count = 0; index.clear();
+    for (size_t i = 0; i < data.size(); ++i) {
+        EmergencyReport r;
+        if (EmergencyReport::fromFileLine(data[i], r) && !exists(r.getId())) insertAtEnd(r);
+    }
+    saveToFile();
+}
 
 int ReportManager::countBySeverity(const string& sev) const {
     int n = 0;

@@ -1,5 +1,6 @@
 #include "ChatBot.h"
 #include "Utils.h"
+#include "FloodGuide.h"
 #include <iostream>
 #include <sstream>
 using namespace std;
@@ -17,7 +18,7 @@ static string lower(string s) {
 }
 
 ChatBot::ChatBot(const ReportManager& r, const CampManager& c, const PriorityQueue& q)
-    : reports(r), camps(c), queue(q) {}
+    : reports(r), camps(c), queue(q), citizenMode(false) {}
 
 bool ChatBot::has(const string& text, const string& word) {
     return text.find(word) != string::npos;
@@ -72,7 +73,54 @@ string ChatBot::helpAnswer() const {
 string ChatBot::reply(const string& question) const {
     string q = lower(question);
 
-    if (has(q, "hello") || has(q, "hi ") || q == "hi" || has(q, "hey"))
+    if (has(q, "report")) {
+        int id = 0; bool digits = false;
+        for (size_t i = 0; i < q.size(); ++i) if (isdigit((unsigned char)q[i])) {
+            digits = true; id = id * 10 + (q[i] - '0');
+        }
+        if (digits) {
+            EmergencyReport r;
+            if (!reports.getReport(id, r)) return "I could not find report #" + num(id) + ".";
+            string answer = "Report #" + num(id) + " is " + r.getStatus() + ".";
+            if (r.getStatus() == "Pending") {
+                vector<EmergencyReport> waiting; queue.toVector(waiting);
+                for (size_t i = 0; i < waiting.size(); ++i) if (waiting[i].getId() == id) {
+                    answer += " It is number " + num((int)i + 1) + " of " + num((int)waiting.size()) + " in the queue."; break;
+                }
+            }
+            if (!citizenMode) answer += " Victim: " + r.getVictimName() + ", location: " + r.getLocation() + ".";
+            return answer;
+        }
+    }
+
+    if (has(q, "snake") || has(q, "bite") || has(q, "first aid") || has(q, "water safe") || has(q, "safe to drink")) {
+        string answer = guideAnswer(question);
+        if (!answer.empty() && answer != "@CAMPS") return answer;
+    }
+    if (has(q, "camp") || has(q, "shelter") || has(q, "where are the relief camps")) {
+        ostringstream out;
+        out << "Relief camps: ";
+        for (int i = 0; i < camps.getCampCount(); ++i) {
+            if (i) out << "; ";
+            const ReliefCamp& c = camps.campAt(i);
+            out << c.getName() << " (" << c.getLocation() << ", " << c.getAvailableBeds() << " beds)";
+        }
+        if (!camps.getCampCount()) out << "none registered";
+        return out.str();
+    }
+    if (has(q, "112")) return "112 is India's national emergency helpline. Call it now if you are in danger.";
+    if (has(q, "trapped") || has(q, "danger") || has(q, "help me") || has(q, "rising"))
+        return "If you are in immediate danger, call 112 now, move to higher ground, avoid moving water and share your exact location.";
+    if (q == "hi" || q == "hello" || q == "hey" || has(q, "namaste"))
+        return "Hello! I am FloodBot. Ask me about flood safety, relief camps, helplines or your report status.";
+
+    if (citizenMode) {
+        if (has(q, "who") || has(q, "next") || has(q, "queue")) return "For your report's status, ask 'status of report <ID>'. Call 112 for immediate danger.";
+        if (has(q, "water") && (has(q, "safe") || has(q, "drink"))) return guideAnswer(question);
+        return "I can help with flood safety, helplines, relief camps and report status. For immediate danger call 112.";
+    }
+
+    if (has(q, "hello") || q == "hi" || q == "hey" || q == "hey there")
         return "Hello! I am FloodBot. Ask me about reports, the queue or relief camps. Type 'help' for ideas.";
     if (has(q, "help") || has(q, "what can you"))
         return helpAnswer();
@@ -88,8 +136,9 @@ string ChatBot::reply(const string& question) const {
         return "There are " + num(queue.getSize()) + " emergencies waiting in the priority queue. " + nextCaseAnswer();
     if (has(q, "summary") || has(q, "total") || has(q, "how many") || has(q, "overview") || has(q, "dashboard"))
         return summaryAnswer();
-    if (has(q, "safe") || has(q, "tip") || has(q, "advice") || has(q, "flood"))
-        return safetyAnswer();
+    string guide = guideAnswer(question);
+    if (!guide.empty() && guide != "@CAMPS") return guide;
+    if (has(q, "safe") || has(q, "tip") || has(q, "advice") || has(q, "flood")) return safetyAnswer();
 
     return "Sorry, I did not understand that. Type 'help' to see what I can answer.";
 }

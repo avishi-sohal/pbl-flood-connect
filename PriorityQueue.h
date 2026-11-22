@@ -2,6 +2,7 @@
 #define PRIORITYQUEUE_H
 
 #include "EmergencyReport.h"
+#include <vector>
 
 class ReportManager;   // forward declaration
 
@@ -31,6 +32,8 @@ public:
     bool peek(EmergencyReport& out) const;    // look at the front WITHOUT removing it
     bool removeById(int id);                  // remove a report from anywhere in the queue
     bool contains(int id) const;
+    void clear();
+    void toVector(std::vector<EmergencyReport>& out) const;
     bool isEmpty() const;
     int getSize() const;
     void display() const;

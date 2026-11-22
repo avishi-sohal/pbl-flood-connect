@@ -1,0 +1,52 @@
+# Build outputs
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+FloodConnect
+run_tests
+
+# Build directories
+build/
+dist/
+bin/
+obj/
+
+# Debug artifacts
+*.pdb
+*.ilk
+*.dSYM/
+*.stackdump
+*.gch
+
+# Visual Studio
+.vs/
+*.sln
+*.suo
+*.user
+*.filters
+*.vcxproj
+*.vcxproj.user
+*.opensdf
+*.sdf
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*~

@@ -2,6 +2,8 @@
 #define EMERGENCYREPORT_H
 
 #include <string>
+#include <vector>
+#include "HashIndex.h"
 using namespace std;
 
 class PriorityQueue;   
@@ -64,6 +66,7 @@ private:
     ReportNode* tail;
     int count;
     string fileName;
+    HashIndex index;
 
     ReportNode* findNode(int id) const;
     void insertAtEnd(const EmergencyReport& r);
@@ -100,6 +103,8 @@ public:
     int countByStatus(const string& stat) const;
     int countActive() const;
     bool getLatestActiveHigh(EmergencyReport& out) const;
+    void snapshot(vector<string>& out) const;
+    void restore(const vector<string>& data);
 };
 
 #endif

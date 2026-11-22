@@ -15,6 +15,7 @@ private:
     const ReportManager& reports;
     const CampManager& camps;
     const PriorityQueue& queue;
+    bool citizenMode;
 
     static bool has(const string& text, const string& word);   // does text contain word?
     string highPriorityAnswer() const;
@@ -28,6 +29,7 @@ private:
 public:
     ChatBot(const ReportManager& r, const CampManager& c, const PriorityQueue& q);
     string reply(const string& question) const;   // returns the bot's answer
+    void setCitizenMode(bool enabled) { citizenMode = enabled; }
     void run() const;                             // chat loop (type "exit" to leave)
 };
 
