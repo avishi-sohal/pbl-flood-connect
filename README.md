@@ -1,104 +1,116 @@
-# FloodConnect – Smart Emergency Management System
+# FloodConnect
 
-FloodConnect is a console-based C++ project designed to manage flood emergency reports, prioritize rescue requests, track victim status, and manage relief camps and resources.
+**Smart Flood Emergency & Rescue Management System**
 
-**Current Status:** Phase 2 – Core functionality implemented.
+FloodConnect is a C++-based prototype for managing flood emergencies. It records and prioritises reports, plans rescue routes, allocates relief-camp resources, and provides role-based access and citizen assistance.
 
 ## Features
 
-- Register, view, search, update, and delete emergency reports.
-- Prioritize emergencies by severity: HIGH, MEDIUM, and LOW.
-- Track rescue status: Pending, In Progress, Rescued, and Closed.
-- Manage relief camps, available beds, food packets, and medical kits.
-- Display a dashboard with emergency and resource statistics.
-- Save data in text files for persistence between runs.
-- Validate user input and prevent duplicate IDs.
+- Emergency reporting and severity-based prioritisation
+- Graph-based route planning using Dijkstra's algorithm
+- Flooded-road avoidance
+- Greedy relief-resource allocation
+- Hash-based report lookup and stack-based undo
+- Admin, rescue-team and citizen roles
+- Rule-based FloodBot and image analysis
+- Dashboard and browser-based interface
 
 ## Tech Stack
 
-- **Language:** C++, HTML, CSS
-- **Concepts:** Object-Oriented Programming (OOP), classes, objects, encapsulation, and file handling.
-- **Data Structures:** Singly linked list, priority queue implemented using a linked list, and vector.
-- **File Storage:** Plain-text files (`.txt`)
-- **Compiler:** g++ 
-- **Development Environment:** Visual Studio Code (VS Code)
+- **Language:** C++
+- **Concepts:** OOP, linked lists, priority queue, vector, graph, hashing and stack
+- **Interface:** HTML
+- **Storage:** Local text files (no database)
 
-No database or external libraries are required.
-
-## Project Structure
+## Folder Structure
 
 ```text
 FloodConnect/
-├── main.cpp                 # Main menu and program entry point
-├── Utils.h                  # Input validation utilities
-├── EmergencyReport.h/.cpp   # Emergency reports and linked-list management
-├── PriorityQueue.h/.cpp     # Priority-based emergency management
-├── ReliefCamp.h/.cpp        # Relief camps and resource management
-├── Dashboard.h/.cpp         # Emergency and resource summary
-├── reports.txt              # Saved emergency reports
-├── camps.txt                # Saved relief camp data
-└── README.md                # Project documentation
+├── main.cpp
+├── Utils.h
+├── EmergencyReport.h
+├── EmergencyReport.cpp
+├── PriorityQueue.h
+├── PriorityQueue.cpp
+├── ReliefCamp.h
+├── ReliefCamp.cpp
+├── Dashboard.h
+├── Dashboard.cpp
+├── ChatBot.h
+├── ChatBot.cpp
+├── FloodGuide.h
+├── FloodGuide.cpp
+├── RoadGraph.h
+├── RoadGraph.cpp
+├── Allocation.h
+├── Allocation.cpp
+├── ImageAnalysis.h
+├── ImageAnalysis.cpp
+├── HashIndex.h
+├── UndoManager.h
+├── UndoManager.cpp
+├── Auth.h
+├── tests.cpp
+├── Makefile
+├── FloodConnect_phase3.html
+├── reports.txt
+├── camps.txt
+├── roads.txt
+├── PRESENTATION_NOTES.md
+└── README.md
 ```
 
-## How to Run
+*`roads.txt` is created when flooded-road data is first saved. The text data files are used for local persistence.*
 
-### Prerequisites
+## Build and Run
 
-Install a C++ compiler such as `g++` and ensure it is available in your terminal.
-
-### 1. Clone the repository
+Build using the Makefile:
 
 ```bash
-git clone https://github.com/avishi-sohal/pbl-flood-connect.git
+make
 ```
 
-### 2. Open the project folder
-
-```bash
-cd pbl-flood-connect
-```
-
-### 3. Compile the program
-
-Run this command from inside the project folder:
-
-```bash
-g++ main.cpp EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp ChatBot.cpp -o FloodConnect.exe
-```
-
-### 4. Run the program
-
-**Windows (PowerShell):**
+Run on Windows:
 
 ```powershell
-./FloodConnect.exe
+.\FloodConnect.exe
 ```
 
-**Linux/macOS:**
+Or compile manually with g++:
 
 ```bash
-./FloodConnect
+g++ -std=c++11 main.cpp EmergencyReport.cpp PriorityQueue.cpp ReliefCamp.cpp Dashboard.cpp ChatBot.cpp RoadGraph.cpp Allocation.cpp ImageAnalysis.cpp UndoManager.cpp FloodGuide.cpp -o FloodConnect
 ```
 
-Run the program from inside the project folder so it can access `reports.txt` and `camps.txt`. If the data files are missing, the program starts with empty data and creates the files when saving.
+## Testing
 
+```bash
+make test
+```
 
-## Team Members
+The project test suite includes 46 automated checks.
 
-- **Abhiroop Joshi**
-- **Avishi Sohal**
-- **Simmi Dhyani**
-- **Mouli Dhyani**
+## Demo Login
 
-## Future Enhancements
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `admin123` |
+| Rescue | `rescue` | `rescue123` |
+| Citizen | `citizen` | `citizen123` |
 
-The following features are planned for Phase 3 and are not implemented in the current version:
+*Demo credentials only. Authentication is not production-grade.*
 
-- AI-based classification of flood images as real, fake, or AI-generated.
-- Graph-based road mapping and shortest-path rescue routing.
-- User authentication and role-based access.
-- Improved dashboard and resource allocation.
+## Browser Version
 
----
+Open `FloodConnect_phase3.html` in a modern web browser.
 
-*FloodConnect aims to support more organized emergency response and resource management during floods.*
+## Limitations
+
+- Uses sample locations and local text-file storage.
+- C++ image analysis accepts PPM files and uses colour-based estimation, not a trained AI model.
+- Resource allocation is greedy, not globally optimal.
+- Designed as a single-user prototype.
+
+## Documentation
+
+See [`PRESENTATION_NOTES.md`](PRESENTATION_NOTES.md) for the demonstration flow and evaluator Q&A.
